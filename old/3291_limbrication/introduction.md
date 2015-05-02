@@ -1,0 +1,1 @@
+Dans ce chapitre, nous verrons pour la première fois à quoi ressemble la syntaxe utilisée par Sass et comment lui demander de générer les fichiers CSS. Ensuite, je vous parlerai d'une fonctionnalité bien pratique de Sass : l'imbrication de règles.

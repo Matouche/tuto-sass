@@ -1,0 +1,3 @@
+Les *conditions* et les *boucles* sont deux concepts-clefs en programmation, que Sass vient ajouter à notre palette d'outils. Les boucles s'inscrivent très fortement dans le principe DRY : elles sont utiles lorsqu'un code se répète plusieurs fois, avec de très légers changements. Les conditions, quant à elles, ne vous serviront que si vous travaillez sur des mixins ou des fonctions dont une partie du code ne doit être utilisée que dans certains cas.
+
+*[DRY]: Don't Repeat Yourself

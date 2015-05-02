@@ -1,0 +1,1 @@
+Si je vous dis que Sass est un *préprocesseur CSS*, je suppose que vous avez envie de fuir en courant. Restez ! Vous allez voir que ce n'est vraiment pas compliqué et que c'est très puissant.

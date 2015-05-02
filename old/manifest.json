@@ -1,0 +1,249 @@
+{
+    "title": "Des feuilles de style stylées grâce à Sass et Compass", 
+    "description": "Apprenez à mieux organiser vos feuilles de styles avec Sass", 
+    "type": "BIG", 
+    "licence": "CC BY-SA", 
+    "introduction": "introduction.md", 
+    "conclusion": "conclusion.md", 
+    "parts": [
+        {
+            "pk": 706, 
+            "title": "A la découverte de Sass", 
+            "introduction": "706_a-la-decouverte-de-sass/introduction.md", 
+            "conclusion": "706_a-la-decouverte-de-sass/conclusion.md", 
+            "chapters": [
+                {
+                    "pk": 3286, 
+                    "title": "C'est quoi Sass ?", 
+                    "introduction": "706_a-la-decouverte-de-sass/3286_cest-quoi-sass/introduction.md", 
+                    "conclusion": "706_a-la-decouverte-de-sass/3286_cest-quoi-sass/conclusion.md", 
+                    "extracts": [
+                        {
+                            "pk": 10269, 
+                            "title": "Un préprocesseur", 
+                            "text": "706_a-la-decouverte-de-sass/3286_cest-quoi-sass/10269_un-preprocesseur.md"
+                        }, 
+                        {
+                            "pk": 10270, 
+                            "title": "Du SCSS au navigateur", 
+                            "text": "706_a-la-decouverte-de-sass/3286_cest-quoi-sass/10270_du-scss-au-navigateur.md"
+                        }, 
+                        {
+                            "pk": 10271, 
+                            "title": "Et Less dans tout ça ?", 
+                            "text": "706_a-la-decouverte-de-sass/3286_cest-quoi-sass/10271_et-less-dans-tout-ca.md"
+                        }, 
+                        {
+                            "pk": 10272, 
+                            "title": "Installons Sass (& Compass)", 
+                            "text": "706_a-la-decouverte-de-sass/3286_cest-quoi-sass/10272_installons-sass-compass.md"
+                        }, 
+                        {
+                            "pk": 10273, 
+                            "title": "Votre premier projet", 
+                            "text": "706_a-la-decouverte-de-sass/3286_cest-quoi-sass/10273_votre-premier-projet.md"
+                        }
+                    ]
+                }, 
+                {
+                    "pk": 3291, 
+                    "title": "L'imbrication", 
+                    "introduction": "706_a-la-decouverte-de-sass/3291_limbrication/introduction.md", 
+                    "conclusion": "706_a-la-decouverte-de-sass/3291_limbrication/conclusion.md", 
+                    "extracts": [
+                        {
+                            "pk": 10314, 
+                            "title": "Compiler avec Compass", 
+                            "text": "706_a-la-decouverte-de-sass/3291_limbrication/10314_compiler-avec-compass.md"
+                        }, 
+                        {
+                            "pk": 10315, 
+                            "title": "L'imbrication, c'est facile !", 
+                            "text": "706_a-la-decouverte-de-sass/3291_limbrication/10315_limbrication-cest-facile.md"
+                        }, 
+                        {
+                            "pk": 10316, 
+                            "title": "Faire référence au parent", 
+                            "text": "706_a-la-decouverte-de-sass/3291_limbrication/10316_faire-reference-au-parent.md"
+                        }, 
+                        {
+                            "pk": 11289, 
+                            "title": "Imbriquer des media-queries", 
+                            "text": "706_a-la-decouverte-de-sass/3291_limbrication/11289_imbriquer-des-media-queries.md"
+                        }, 
+                        {
+                            "pk": 10317, 
+                            "title": "Bonne pratique : « The Inception Rule »", 
+                            "text": "706_a-la-decouverte-de-sass/3291_limbrication/10317_bonne-pratique-the-inception-rule.md"
+                        }
+                    ]
+                }, 
+                {
+                    "pk": 3305, 
+                    "title": "Les variables", 
+                    "introduction": "706_a-la-decouverte-de-sass/3305_les-variables/introduction.md", 
+                    "conclusion": "706_a-la-decouverte-de-sass/3305_les-variables/conclusion.md", 
+                    "extracts": [
+                        {
+                            "pk": 10325, 
+                            "title": "Rencontre avec les variables", 
+                            "text": "706_a-la-decouverte-de-sass/3305_les-variables/10325_rencontre-avec-les-variables.md"
+                        }, 
+                        {
+                            "pk": 10326, 
+                            "title": "Les types de données", 
+                            "text": "706_a-la-decouverte-de-sass/3305_les-variables/10326_les-types-de-donnees.md"
+                        }, 
+                        {
+                            "pk": 10327, 
+                            "title": "Les opérations", 
+                            "text": "706_a-la-decouverte-de-sass/3305_les-variables/10327_les-operations.md"
+                        }, 
+                        {
+                            "pk": 10328, 
+                            "title": "La concaténation et l'interpolation", 
+                            "text": "706_a-la-decouverte-de-sass/3305_les-variables/10328_la-concatenation-et-linterpolation.md"
+                        }, 
+                        {
+                            "pk": 10329, 
+                            "title": "La portée des variables", 
+                            "text": "706_a-la-decouverte-de-sass/3305_les-variables/10329_la-portee-des-variables.md"
+                        }
+                    ]
+                }, 
+                {
+                    "pk": 3308, 
+                    "title": "Les mixins", 
+                    "introduction": "706_a-la-decouverte-de-sass/3308_les-mixins/introduction.md", 
+                    "conclusion": "706_a-la-decouverte-de-sass/3308_les-mixins/conclusion.md", 
+                    "extracts": [
+                        {
+                            "pk": 10336, 
+                            "title": "Votre premier mixin", 
+                            "text": "706_a-la-decouverte-de-sass/3308_les-mixins/10336_votre-premier-mixin.md"
+                        }, 
+                        {
+                            "pk": 10340, 
+                            "title": "Inclure un mixin", 
+                            "text": "706_a-la-decouverte-de-sass/3308_les-mixins/10340_inclure-un-mixin.md"
+                        }, 
+                        {
+                            "pk": 10346, 
+                            "title": "Les arguments", 
+                            "text": "706_a-la-decouverte-de-sass/3308_les-mixins/10346_les-arguments.md"
+                        }, 
+                        {
+                            "pk": 10347, 
+                            "title": "Arguments : le retour", 
+                            "text": "706_a-la-decouverte-de-sass/3308_les-mixins/10347_arguments-le-retour.md"
+                        }, 
+                        {
+                            "pk": 10348, 
+                            "title": "Media-queries et @content", 
+                            "text": "706_a-la-decouverte-de-sass/3308_les-mixins/10348_media-queries-et-content.md"
+                        }
+                    ]
+                }, 
+                {
+                    "pk": 3309, 
+                    "title": "@extend & @import", 
+                    "introduction": "706_a-la-decouverte-de-sass/3309_extend-import/introduction.md", 
+                    "conclusion": "706_a-la-decouverte-de-sass/3309_extend-import/conclusion.md", 
+                    "extracts": [
+                        {
+                            "pk": 10350, 
+                            "title": "L’héritage avec @extend", 
+                            "text": "706_a-la-decouverte-de-sass/3309_extend-import/10350_lheritage-avec-extend.md"
+                        }, 
+                        {
+                            "pk": 10351, 
+                            "title": "Bonne pratique : Les « classes fictives »", 
+                            "text": "706_a-la-decouverte-de-sass/3309_extend-import/10351_bonne-pratique-les-classes-fictives.md"
+                        }, 
+                        {
+                            "pk": 10352, 
+                            "title": "Plus loin avec l’héritage", 
+                            "text": "706_a-la-decouverte-de-sass/3309_extend-import/10352_plus-loin-avec-lheritage.md"
+                        }, 
+                        {
+                            "pk": 10353, 
+                            "title": "Importer un fichier", 
+                            "text": "706_a-la-decouverte-de-sass/3309_extend-import/10353_importer-un-fichier.md"
+                        }, 
+                        {
+                            "pk": 10354, 
+                            "title": "Bonne pratique : Les feuilles partielles", 
+                            "text": "706_a-la-decouverte-de-sass/3309_extend-import/10354_bonne-pratique-les-feuilles-partielles.md"
+                        }
+                    ]
+                }, 
+                {
+                    "pk": 3317, 
+                    "title": "Les fonctions", 
+                    "introduction": "706_a-la-decouverte-de-sass/3317_les-fonctions/introduction.md", 
+                    "conclusion": "706_a-la-decouverte-de-sass/3317_les-fonctions/conclusion.md", 
+                    "extracts": [
+                        {
+                            "pk": 10389, 
+                            "title": "Qu'est-ce qu'une fonction ?", 
+                            "text": "706_a-la-decouverte-de-sass/3317_les-fonctions/10389_quest-ce-quune-fonction.md"
+                        }, 
+                        {
+                            "pk": 10410, 
+                            "title": "Quelques fonctions utiles", 
+                            "text": "706_a-la-decouverte-de-sass/3317_les-fonctions/10410_quelques-fonctions-utiles.md"
+                        }, 
+                        {
+                            "pk": 10411, 
+                            "title": "La palette du peintre", 
+                            "text": "706_a-la-decouverte-de-sass/3317_les-fonctions/10411_la-palette-du-peintre.md"
+                        }, 
+                        {
+                            "pk": 10412, 
+                            "title": "Tu comprendras quand tu seras grand !", 
+                            "text": "706_a-la-decouverte-de-sass/3317_les-fonctions/10412_tu-comprendras-quand-tu-seras-grand.md"
+                        }, 
+                        {
+                            "pk": 10419, 
+                            "title": "Créer une fonction", 
+                            "text": "706_a-la-decouverte-de-sass/3317_les-fonctions/10419_creer-une-fonction.md"
+                        }
+                    ]
+                }, 
+                {
+                    "pk": 3357, 
+                    "title": "Boucles & Conditions", 
+                    "introduction": "706_a-la-decouverte-de-sass/3357_boucles-conditions/introduction.md", 
+                    "conclusion": "706_a-la-decouverte-de-sass/3357_boucles-conditions/conclusion.md", 
+                    "extracts": [
+                        {
+                            "pk": 10514, 
+                            "title": "La boucle @for", 
+                            "text": "706_a-la-decouverte-de-sass/3357_boucles-conditions/10514_la-boucle-for.md"
+                        }, 
+                        {
+                            "pk": 10516, 
+                            "title": "La boucle @each", 
+                            "text": "706_a-la-decouverte-de-sass/3357_boucles-conditions/10516_la-boucle-each.md"
+                        }, 
+                        {
+                            "pk": 10644, 
+                            "title": "Les conditions : le principe", 
+                            "text": "706_a-la-decouverte-de-sass/3357_boucles-conditions/10644_les-conditions-le-principe.md"
+                        }, 
+                        {
+                            "pk": 10651, 
+                            "title": "Conditions plus complexes", 
+                            "text": "706_a-la-decouverte-de-sass/3357_boucles-conditions/10651_conditions-plus-complexes.md"
+                        }, 
+                        {
+                            "pk": 10652, 
+                            "title": "Mini-TP : Un mixin bien compliqué", 
+                            "text": "706_a-la-decouverte-de-sass/3357_boucles-conditions/10652_mini-tp-un-mixin-bien-complique.md"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

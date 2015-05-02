@@ -1,0 +1,1 @@
+Vous avez survécu aux mixins ? Tant mieux ! Nous allons maintenant découvrir deux directives très utiles utiles : `@extend` et `@import`. Il sera question dans ce chapitre d'héritage de classe et d'import de fichiers. Let's go !

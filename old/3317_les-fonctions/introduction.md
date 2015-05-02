@@ -1,0 +1,1 @@
+Dans le chapitre sur les variables, j'ai évoqué très rapidement les fonctions. Il est temps de revenir plus en détail sur ses petites moulinettes bien pratiques.
