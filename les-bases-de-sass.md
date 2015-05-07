@@ -344,9 +344,20 @@ Une variable, c'est un peu comme une enveloppe. On stocke à l'intérieur une va
 
 ![Une variable, c'est comme une enveloppe : ça a une étiquette (un nom) et on stocke une valeur à l'intérieur.](img/enveloppevariable.png)
 
+Comment allons-nous dire à Sass qu'il doit mettre la valeur `#ff0` dans la variable `$color` ? Ce n'est pas très compliqué, en fait :
 
+    :::scss
+    //A insérer au-début de screen.scss
+    $color : #ff0;
+
+On dit qu'on a *déclaré* une variable. Le nom de la variable commence nécessairement par `$`. Il est suivi de `:`, puis de la valeur que l'on veut donner à notre variable.
+
+Vous remarquez que j'ai écris dans le code un *commentaire* précédé par `//`. C'est un commentaire d'une ligne, spécifique à Sass, qui n'apparaitra pas dans le fichier `.css`.
+
+Maintenant, on peut utiliser notre variable dans le reste du code
 
 ###Les différents types de données
+
 ###L'interpolation
 
 ##La directive @import
