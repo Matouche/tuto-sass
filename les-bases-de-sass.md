@@ -350,18 +350,56 @@ Comment allons-nous dire à Sass qu'il doit mettre la valeur `#ff0` dans la vari
     //A insérer au-début de screen.scss
     $color : #ff0;
 
-On dit qu'on a *déclaré* une variable. Le nom de la variable commence nécessairement par `$`. Il est suivi de `:`, puis de la valeur que l'on veut donner à notre variable.
+On dit qu'on a *déclaré* une variable. Le nom de la variable commence nécessairement par `$`. Il est suivi de `:` puis de la valeur que l'on veut donner à notre variable.
 
 Vous remarquez que j'ai écris dans le code un *commentaire* précédé par `//`. C'est un commentaire d'une ligne, spécifique à Sass, qui n'apparaitra pas dans le fichier `.css`.
 
-Maintenant, on peut utiliser notre variable dans le reste du code
+Maintenant, on peut utiliser notre variable dans le reste du code, par exemple pour le titre principal :
+
+    :::scss hl_lines="4"
+    #hgroup{
+        float: left;
+        h1{
+            color: $color;
+            font-size: 2em;
+            line-height: 1em;
+        }
+        ...
+    }
+
+À la compilation, Sass va remplacer le nom `$color` par la valeur `#ff0`. On peut aussi utiliser `$color` pour l'arrière-plan des boutons (`#production .more, #contact button`). Désormais, si on ajoute un élément qui utilise cette couleur, on pourra faire appel à notre variable.
+
+Imaginons maintenant que notre client producteur de boissons gazeuses décide de changer la charte graphique : on va prendre du vert, ça fait plus bio ! Il suffit pour cela de changer la valeur de `$color` :
+
+    :::scss
+    $color : #af0;
+
+![La main verte a encore frappé.](img/forceverte.png)
+
+Voilà pour l'utilisation basique des variables avec Sass, voyons maintenant plus en détail tout ce que l'on peut mettre dedans.
 
 ###Les différents types de données
+Il existe quatre principaux types de données que lon peut stocker à l'intérieur d'une variable : les couleurs, les nombres, les chaines de caractères et les listes.
+
+Nous avons déjà vu comment cela fonctionnait pour **les couleurs**. Elles peuvent être nommées (par exemple `yellow`), ou écrites sous une forme hexadécimale (rappelez-vous `#ffff00`), mais aussi en RGB (`rgb(255,255,0)`) ou RGBA (`rgba(255,255,0,0.5)`), voire même en HSL/HSLA.
+
+*[HSL]: Hue Saturation Light (Teinte Saturation Lumière)
+*[HSLA]: Hue Saturation Light Alpha (Teinte Saturation Lumière Alpha)
+
+Passons maintenant aux **nombres**. *nombres*. Les nombres peuvent ne pas avoir d'unité (par exemple `255`) ou en avoir une (par exemple `1em` ou `16px`). On peut s'en servir pour contenir la fonte des caractères, la largeur ou la hauteur d'un bloc, la dimensions des marges, etc. Très clairement, je ne vois pas d'exemple intéressant dans notre fil rouge, mais ce n'est pas bien compliqué à mettre en place :
+
+    :::scss
+    //Exemple bidon
+    $largeur: 800px;
+    body{
+      width: $largeur;
+    }
+
 
 ###L'interpolation
 
 ##La directive @import
-###Importer des feuilles de styles
+###Importer des feuilles de style   
 ###Bonne pratique : les feuilles partielles
 ###!default
 ###En résumé
