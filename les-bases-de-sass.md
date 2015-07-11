@@ -271,10 +271,9 @@ Voilà, pas grand chose d'autre à dire là-dessus, même si on reparlera un peu
 — Ça y est ? On a fini ?  
 — Pas si vite, chenapans ! Il reste une bonne pratique !
 
-Nous sommes en 2013 et vous écoutez France Inter (oui oui, France Inter !) quand tout à coup résonne ce message à caractère informatif émanant du ministère de la Santé :
+Commençons cette dernière section par une citation de bon aloi.
 
 >Les antibiotiques : utilisés à tord, ils deviendront moins fort.
-
 Source: Marisol Touraine
 
 C'est pareil pour Sass, et en particulier pour l'imbrication. En effet, si l'imbrication est un outil puissant, il ne faut pas pour autant en abuser, au risque de provoquer une pagaille inimaginable. Vous pourriez être tentés de reproduire dans la feuille de style la structure de la page HTML, un peu comme ceci :
@@ -376,17 +375,19 @@ Imaginons maintenant que notre client producteur de boissons gazeuses décide de
 
 ![La main verte a encore frappé.](img/forceverte.png)
 
-Voilà pour l'utilisation basique des variables avec Sass, voyons maintenant plus en détail tout ce que l'on peut mettre dedans.
+Vous l'aurez compris, l'intérêt des variables est avant tout de rassembler au même endroit les valeurs (couleurs, polices, etc.) qui reviennent dans notre feuille de style, afin de faciliter leur modification : plus besoin de parcourir l'ensemble du code à la recherche de chaque occurrence, tout est stocké dans une sorte de palette au début du fichier.
+
+Voilà donc pour l'utilisation basique des variables avec Sass, voyons maintenant plus en détail tout ce que l'on peut mettre dedans.
 
 ###Les différents types de données
-Il existe quatre principaux types de données que lon peut stocker à l'intérieur d'une variable : les couleurs, les nombres, les chaines de caractères et les listes.
+Il existe quatre principaux types de données que l'on peut stocker à l'intérieur d'une variable : les couleurs, les nombres, les chaînes de caractères et les listes.
 
 Nous avons déjà vu comment cela fonctionnait pour **les couleurs**. Elles peuvent être nommées (par exemple `yellow`), ou écrites sous une forme hexadécimale (rappelez-vous `#ffff00`), mais aussi en RGB (`rgb(255,255,0)`) ou RGBA (`rgba(255,255,0,0.5)`), voire même en HSL/HSLA.
 
 *[HSL]: Hue Saturation Light (Teinte Saturation Lumière)
 *[HSLA]: Hue Saturation Light Alpha (Teinte Saturation Lumière Alpha)
 
-Passons maintenant aux **nombres**. *nombres*. Les nombres peuvent ne pas avoir d'unité (par exemple `255`) ou en avoir une (par exemple `1em` ou `16px`). On peut s'en servir pour contenir la fonte des caractères, la largeur ou la hauteur d'un bloc, la dimensions des marges, etc. Très clairement, je ne vois pas d'exemple intéressant dans notre fil rouge, mais ce n'est pas bien compliqué à mettre en place :
+Passons maintenant aux **nombres**. Les nombres peuvent ne pas avoir d'unité (par exemple `255`) ou en avoir une (par exemple `1em` ou `16px`). On peut s'en servir pour contenir la fonte des caractères, la largeur ou la hauteur d'un bloc, la dimensions des marges, etc. Très clairement, je ne vois pas d'exemple intéressant dans notre fil rouge, mais ce n'est pas bien compliqué à imaginer :
 
     :::scss
     //Exemple bidon
@@ -395,17 +396,146 @@ Passons maintenant aux **nombres**. *nombres*. Les nombres peuvent ne pas avoir 
       width: $largeur;
     }
 
+On peut effectuer des calculs avec les nombres : addition `+`, soustraction `-`, multiplication `*`, division `/` et modulo `%` (reste de la division euclidienne). Cela pourra être utile plus tard, mais pour l'instant, je vous offre un autre exemple sorti de nulle part :
+
+    :::scss hl_lines="2 4 5"
+    //Autre exemple bidon
+    $var: 15px;
+    p{
+      font-size: $var + 5px; // = 20px
+      width: $var * (5+5) - 50px; // = 100px 
+    }
+
+[[information]]
+| Petite précision concernant la division. Si vous écrivez juste `font-size: 40px/2;`, Sass n'effectuera pas la division (il laissera ce code dans le CSS). Pour qu'il fasse le calcul, vous devez ajouter des parenthèses : `font-size: (40px/2);`. Ce problème ne se pose pas si vous utilisez des variables (`$var/2`) dans la division, ou si le calcul est composé de plusieurs opérations (`40px/2 + 5px;`).
+
+Pour votre culture, sachez que Sass permet aussi d'effectuer des opérations sur les couleurs mais on s'en sert assez peu dans la pratique. Nous verrons plus tard que pour modifier une couleur, il existe des *fonctions* spécialisées.
+
+Après cette parenthèse, passons au troisième type : **les chaines de caractères** (le texte). On peut stocker beaucoup de chose dans une chaîne de caractères : une police, une URL, ou n'importe quelle valeur composée de lettres et de chiffres.  Elle peut être encadrée par des guillemets (par exemple `"Open Sans"`) ou non (par exemple `bold`). Prenons notre fil rouge, et ajoutons une variable pour la police de caractère des titres :
+
+    :::scss
+    $head-font: "Grand Hotel";
+    
+Dans la suite du document, on peut faire appel à cette variable par un simple :
+
+    :::scss hl_lines="2"
+    h1, h2{
+        font-family: $head-font;
+    }
+
+Alors j'avoue, j'ai un peu triché. Ce code n'est pas exactement l'équivalent du CSS que nous avions avant, puisque nous ne transmettons qu'une seule police à notre règle. Or, il est souvent conseillé de proposer plusieurs polices, séparées par des virgules, dans le cas où la première n'est pas chargée.
+
+Sass nous offre la possibilité de gérer cette situation avec un quatrième type : **les listes**. Une liste est un ensemble de valeurs séparées par des virgules ou des espaces. Il peut s'agir d'une liste de chaînes de caractères, comme dans notre cas (`"Open Sans", Helvetica, Arial, sans-serif`), ou d'une liste de nombres (`1rem 0`), ou bien encore d'une liste de listes (`box-shadow 1s, background-color 1s`).
+
+Pour notre fil rouge, on gérera les polices avec deux listes de chaînes de caractères :
+
+    :::scss
+    $head-font: "Grand Hotel", serif;
+    $body-font: "Open Sans", Helvetica, Arial, sans-serif;
 
 ###L'interpolation
+Jusqu'à présent, on a vu comment utiliser une variable en tant que valeur passée à une propriété. Cependant, il peut arriver qu'on veuille insérer la valeur d'une variable autre part dans le code : dans un sélecteur, dans le nom d'une propriété, ou en tant que media-query.
 
-##La directive @import
-###Importer des feuilles de style   
-###Bonne pratique : les feuilles partielles
-###!default
+Justement, revenons à notre fil rouge et intéressons-nous aux media-queries. Dans le chapitre précédent nous les avions imbriquées dans d'autres blocs.  Or on remarque dans notre code qu'il y en a deux qui reviennent :
+
+    :::scss
+    @media screen and (max-width: 540px){...}//pour les petits écrans
+    @media screen and (min-width: 740px){...}//pour les grands écrans
+    
+On peut donc facilement gérer cela en passant une variable entre parenthèses :
+
+    :::scss hl_lines="2 6"
+    //on stocke la règle dans une variable
+    $large-screen: "min-width: 740px";
+    //on l'insère entre parenthèses en tant que chaîne de caractères
+    #description{
+        max-width:22rem;
+        @media screen and ($large-screen){
+            max-width:48%;
+        }
+    }
+
+Mais on pourrait aller plus loin en stockant l'intégralité de nos media-queries dans des variables :
+
+    :::scss
+    $small-screen: "screen and (max-width: 540px)";
+    $large-screen: "screen and (min-width: 740px)";
+    
+Comment insérer ces chaînes de caractères ? Le code suivant ne fonctionne malheureusement pas :
+
+    :::scss
+    #description{
+        max-width:22rem;
+        @media $large-screen{
+            max-width:48%;
+        }
+    }
+
+On va devoir utiliser une syntaxe particulière, **l'interpolation**. Le principe est assez simple : on place le nom de la variable entre `#{` et `}`. Ainsi, le code suivant aura l'effet escompté :
+
+    :::scss hl_lines="3"
+    #description{
+        max-width:22rem;
+        @media #{$large-screen}{
+            max-width:48%;
+        }
+    }
+Personnellement, je trouve qu'on gagne déjà un peu en lisibilité, puisque, intuitivement, cela veut dire :
+
+> Ce qui se trouve dans ce bloc est destiné aux écrans larges.
+
+C'est tout pour l'interpolation, qui pourra aussi vous être utile si vous souhaitez modifier un selecteur, et, plus rarement, le nom d'une règle. Retenez bien sa syntaxe, on en reparlera dans plusieurs chapitres.
+
 ###En résumé
+* Une variable a un nom et permet de *stocker* une valeur.
+* On *déclare* une variable ainsi `$nom: valeur;`. Ensuite, pour accéder à la valeur, on donne le nom de la variable.
+* Il existe 4 principaux *types de données* : les nombres, les chaînes de caractères, les couleurs et les listes.
+* Pour insérer une variable dans le nom d'une propriété, dans un sélecteur, ou en tant que media-query, on utilise la syntaxe d'interpolation `#{$variable}`.
+
+###Pour s'entraîner
+Déclarez les variables suivantes au début de la feuille de styles, puis utilisez-les à chaque fois que c'est nécessaire :
+
+    :::scss
+    //Couleurs
+    $color: #ff0;
+    $color-hover: #ff4;
+    $dark: #222;
+    $dark-hover: #444;
+    $light: #eee;
+    $ultra-light: #fff;
+    
+    //Polices
+    $head-font: "Grand Hotel", serif;
+    $body-font: "Open Sans", Helvetica, Arial, sans-serif;
+    
+    //Media-queries
+    $small-screen: "screen and (max-width: 540px)";
+    $large-screen: "screen and (min-width: 740px)";
+
+La soluce est [par ici](https://github.com/Matouche/CitronInc/blob/master/corrections/variables.scss).
+
+###Ce dont je ne vous ai parlé
+C'est le moment confession de ce chapitre. Je ne vous ai pas dit tout ce qu'il y avait à savoir sur les variables.
+
+* Je ne vous ai pas parlé de la règle `!default` et des types Booléen et Null parce que nous en reparlerons dans d'autres chapitres.
+* Je n'ai pas intégré la concaténation, opération qui permet d'assembler deux chaînes de caractères, car son intérêt est plus que limité.
+* Enfin, je me suis retenu de vous parler du concept de portée des variables, parce que c'est là aussi peu utile.
+
+Bref, a priori, cela ne devrait pas vous manquer. Lorsque vous aurez fini le petit exercice, nous pourrons passer à `@import`, pour voir comment Sass améliore l'import de feuilles de styles.
 
 ##Les mixins (1/2)
+Previously in this tutorial…
+> Une variable, c'est un peu comme une enveloppe. On stocke à l'intérieur une valeur et on met une étiquette dessus (c'est le nom de la variable).
+
+Et maintenant, que se passe-t-il lorsqu'on veut stocker tout un bloc de code pour le réutiliser plusieurs fois ? On prend un colis ? Je sais que vous pouvez mieux faire… Mais oui bien sûr, on crée un **mixin** !
+
 ###Un mixin, pourquoi faire ?
+Intéressons-nous à nos boutons. En soi, ils sont assez banals. Si banals que, à l'exception de la couleur et de la police, on devrait pouvoir les réutiliser sur beaucoup de projets. Il serait donc pas mal de pouvoir empaqueter le code de nos boutons, pour le réutiliser plus tard, tout en se laissant la possibilité de changer certaines options.
+
+Ce paquet a un nom, c'est un **mixin**. On peut le comparer à une *macro* : une macro est un ensemble d'instructions à effectuer, un mixin est un ensemble de styles à appliquer à un élément. On reste dans l'idée *Don't repeat yourself*.
+
+Je vous propose de construire notre mixin `button` pas à pas. La première étape consiste à mettre les styles communs à tous nos boutons dans un bloc précédé de la directive `@mixin`.
+
 ###Inclure un mixin
 ###Les arguments
 ###En résumé
@@ -415,3 +545,19 @@ Passons maintenant aux **nombres**. *nombres*. Les nombres peuvent ne pas avoir 
 ###Listes d'arguments
 ###Passer un bloc de contenu à un mixins
 ###En résumé
+
+##@extend
+###Bonne pratique : les feuilles partielles
+###!default
+###En résumé
+##La directive @import
+— Mais moi je connais `@import`, c'est une directive CSS ça !  
+— Hum oui effectivement…  
+— Et donc tu ne serais pas en train de nous arnaquer en nous parlant de quelque chose qui n'a rien à voir avec Sass ?  
+—  Mais pas du tout ! Car avec Sass, la directive `@import` change de comportement ! En plus, c'est très simple à utiliser, ce qui va vous changer des chapitres précédents. :)
+###Importer des feuilles de style
+Un immense dilemme existe depuis ~~la nuit des temps~~ quelques temps déjà. En pré-prod, il est intéressant de diviser son code en plusieurs fichiers, pour mieux s'organiser. Mais, d'un autre côté, cela augmente le nombre de requêtes effectuées vers le serveur de prod, et ralentit donc le chargement de la page.
+
+Ce dilemme saute avec Sass. Notre outil favori modifie le comportement de la directive `@import` : en fait, plutôt que de laisser le navigateur charger une à une les feuilles de styles importées, il les importe dès à la compilation. Ainsi, on a plusieurs fichiers SCSS, pour une meilleure organisation, mais on n'à qu'un fichier CSS, pour plus de performance.
+
+Pour mettre en pratique, on peut créer dans le dossier de notre fil rouge
