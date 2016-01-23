@@ -600,11 +600,75 @@ Pour l'instant, les règles concernant les couleurs de nos boutons sont en-dehor
 ![Avec les arguments, on peut choisir quel modèle de bouton on veut](img/sweden.png)
 
 Pour notre mixin, il nous faudrait donc trois arguments :
- * `$color` : la couleur du texte du mixin ;
- * `$bgcolor` : la couleur du texte du mixin ;
- * `$bgcolor` : la couleur de l'arrière-plan au hover.
-### En résumé
+ * `$color` : la couleur du texte du bouton ;
+ * `$background-color` : la couleur de l'arrière-plan du bouton ;
+ * `$hover-color` : la couleur de l'arrière-plan au hover.
+ 
+La première étape va donc consister à écrire les règles dans notre mixin, en leur passant pour valeur nos trois arguments, comme n'importe quelles variables :
 
+    :::scss hl_lines="12 13 15"
+    @mixin button{
+        font-family: $head-font;
+        font-size: 1.25rem;
+        text-decoration: none;
+        text-align: center;
+        padding: .5rem;
+        width: 12.5rem;
+        border: none;
+        display: block;
+        float: none;
+        margin: .5rem auto 0;
+        background-color: $background-color;
+        color: $color;
+        &:hover{
+            background-color: $hover-color;
+        }
+        @media #{$large-screen}{
+            display: inline-block;
+            float: right;
+        }
+    }
+
+Maintenant, il faut déclarer ces arguments, et pour cela, on va ajouter leurs noms entre parenthèses après le nom du mixin. Si vous avez déjà fait de la programmation, cette syntaxe devrait vous rappeler les arguments d'une fonction.
+
+    :::scss
+    @mixin button ($color, $background-color, $hover-color) {
+    
+Pour finir, doit renseigner la valeur de ces arguments à chaque `@include`, en écrivant leurs valeurs entre parenthèses, **dans le même ordre** que précédemment :
+
+    :::scss hl_lines="2 5"
+    #produits .more, #clients .more{
+        @include button ($ultra-light, $dark, $dark-hover);
+    }
+    #production .more, #contact button{
+        @include button ($dark, $color, $color-hover);
+    }
+
+Voilà, ce code nous économise de recopier plusieurs fois les mêmes règles lorsque seules les valeurs changent. Avec le même mixin, on obtient deux boutons de même forme mais de couleurs différentes.
+
+### En résumé
+* Un mixin est un *bout de code réutilisable*.
+* Il se *déclare* ainsi :
+
+        :::scss
+        @mixin nom-du-mixin {
+            //Code à réutiliser
+        }
+* A chaque fois qu'on veut l'utiliser, on se sert de la directive `@include nom-du-mixin`.
+* Les *arguments* sont les options du mixin. On s'en sert comme ceci :
+
+        :::scss
+        @mixin nom-du-mixin ($arg1, $arg2) {
+            color: $arg1;
+            font-size: $arg2;
+        }
+        
+        //Plus loin
+        p {
+            @include nom-du-mixin(red, 22px);
+        }
+
+Je vous donne rendez-vous dans le prochain chapitre pour parler… des mixins, parce qu'on n'a pas encore tout vu.
 ## Les mixins (2/2)
 ### Arguments nommés
 ### Listes d'arguments
