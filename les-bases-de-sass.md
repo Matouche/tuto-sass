@@ -535,25 +535,63 @@ La solution est [disponible ici](https://github.com/Matouche/CitronInc/blob/mast
 Lorsque vous aurez fini, nous pourrons passer à `@import`, pour voir comment Sass améliore l'import de feuilles de styles.
 
 ## La directive @import
-La directive `@import`, vous la connaissez probablement déjà : c'est elle qui permet d'indiquer au navigateur qu'il doit charger d'autres feuilles de styles, à la manière de la balise `<link>` en HTML. Si je vous en parle dans ce chapitre, c'est parce que son comportement change considérablement avec Sass, et que c'est tant mieux.
+La directive `@import`, vous la connaissez probablement déjà : c'est elle qui permet d'indiquer au navigateur qu'il doit charger d'autres feuilles de styles, à la manière de la balise `<link>` en HTML. Si je vous en parle dans ce chapitre, c'est parce que son comportement change considérablement avec Sass, et c'est tant mieux.
 
 ### Importer des feuilles de style
 Durant le processus de développement, il est souvent intéressant de diviser son code en plusieurs fichiers, pour mieux s'organiser. Mais, d'un autre côté, cela augmente le nombre de requêtes effectuées vers le serveur de production, et ralentit donc le chargement de la page.
 
 Avec Sass, on n'a plus à se poser la question : notre outil favori modifie le comportement de la directive `@import` : en fait, plutôt que de laisser le navigateur charger une à une les feuilles de styles importées, il les importe dès à la compilation. Ainsi, on a plusieurs fichiers SCSS, pour une meilleure organisation, mais on n'a qu'un fichier CSS, pour plus de performance.
 
-Pour mettre en pratique, on peut créer dans le dossier de notre fil rouge
+Regardons de plus près notre feuille de style fil rouge : j'ai fait exprès de séparer les styles en différentes sections, pour garder un peu de clarté : on a ainsi la section *Reset*, la section *typographie*, la section *boutons*, etc.
+
+Ce serait plus clair si chaque section avait son propre fichier, non ? Je vous propose donc de créer un fichier pour chacune d'entre elles, de manière à obtenir cette arborescence :
+
+```
+sass
+  ├─ sections.scss
+  ├─ button.scss
+  ├─ cards.scss
+  ├─ contact.scss
+  ├─ header_footer.scss
+  ├─ reset.scss
+  ├─ typo.scss
+  ├─ variables.scss
+  └─ main.scss
+```
+
+Placez dans chaque fichier le contenu de la section correspondante. Maintenant, on devrait se retouver avec un `main.scss` totalement vide. Que va-t-on utiliser désormais ? Mais oui, la commande `@import` !
+
+```scss
+// Fichier main.scss
+@import 'reset'; // en premier, évidemment
+@import 'variables'; // important de le mettre ici, sinon les autres
+                     // fichiers n'auront pas accès à nos variables
+@import 'button';
+@import 'typo';
+@import 'cards';
+@import 'header_footer';
+@import 'sections';
+@import 'contact';
+```
+
+Comme vous pouvez le voir, la directive `@import` demande le nom du fichier à importer entre guillemets. Détail intéressant : Sass est suffisament intelligent pour deviner l'extension du fichier et on n'a donc pas à la préciser. Si vous regardez désormais dans le fichier *stylesheets/main.css*, vous verrez que son contenu n'a pas changé : chaque directive `@import` a été remplacée par le contenu du fichier correspondant.
+
 ### Bonne pratique : les feuilles partielles
+Formidable ? Un petit détail vient quand même assombrir le tableau : Sass a généré un fichier CSS pour chaque fichier SCSS. Or, on souhaite seulement qu'il génère le fichier *main.css*. En fait, il faudrait pouvoir dire à Sass de ne pas ne pas compiler les autres feuilles de styles. Et, comme vous pouvez vous en douter, les concepteurs de Sass y ont pensé pour nous.
+
+On appelle **feuille partielle** (traduction de *partial*, en anglais), un fichier SCSS qui a uniquement vocation à être importée dans une autre feuille de styles et qui ne doit donc pas être compilée par Sass. Pour indiquer à Sass qu'un fichier est une feuille partielle, on a juste à ajouter un *underscore* (le symbole `_`) au début du nom de fichiers. Ainsi, `button.scss` devient `_button.scss`. Aucun changement à faire dans notre fichier `main.scss` pour autant, Sass devine qu'il doit ajouter le `_`.
+
 ### !default
+### En résumé
 
 ## Les mixins (1/2)
 Si une variable est bien utile pour stocker une valeur, que faut-il utiliser pour stocker un bloc de code entier afin de faciliter sa réutilisation.
-###Un mixin, pourquoi faire ?
+### Un mixin, pourquoi faire ?
 Intéressons-nous à nos boutons. En soi, ils sont assez banals. Si banals que, à l'exception de la couleur et de la police, on devrait pouvoir les réutiliser sur beaucoup de projets. Il serait donc pas mal de pouvoir empaqueter le code de nos boutons, pour le réutiliser plus tard, tout en se laissant la possibilité de changer certaines options.
 
 Ce paquet a un nom, c'est un **mixin**. On peut le comparer à une *macro* : une macro est un ensemble d'instructions à effectuer, un mixin est un ensemble de styles à appliquer à un élément. On reste dans l'idée *Don't repeat yourself*.
 
-Je vous propose de construire notre mixin `button` pas à pas. La première étape consiste à mettre les styles communs à tous nos boutons dans un bloc précédé de la directive `@mixin` et du nom que l'on souhaite donner à notre mixin. Voici donc le code de notre mixin :
+Je vous propose de construire notre mixin `button` pas à pas, à l'intérieur de la feuille partielle *_button.scss*. La première étape consiste à mettre les styles communs à tous nos boutons dans un bloc précédé de la directive `@mixin` et du nom que l'on souhaite donner à notre mixin. Voici donc le code de notre mixin :
 
 ```scss hl_lines="1"
 @mixin button{
