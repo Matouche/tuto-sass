@@ -507,7 +507,7 @@ C'est tout pour l'interpolation, qui pourra aussi vous être utile si vous souha
 * Pour insérer une variable dans le nom d'une propriété, dans un sélecteur, ou en tant que media-query, on utilise la syntaxe d'interpolation `#{$variable}`.
 
 [[information]]
-|Il resterait d'autres choses à dire sur le système de variables de Sass. Je ne vous ai pas parlé de la règle `!default` et des types Booléen et Null parce que nous en reparlerons dans d'autres chapitres, lorsqu'ils seront réellement utiles. Sinon, il faudrait aussi évoquer la portée des variables, mais ça me semble assez anecdotique dans un cours de base, je vous invite à vous référer à la doc si cela vous intéresse.
+|Il resterait d'autres choses à dire sur le système de variables de Sass. Je ne vous ai pas parlé des types Booléen et Null parce que nous en reparlerons dans d'autres chapitres, lorsqu'ils seront réellement utiles. Sinon, il faudrait aussi évoquer la portée des variables et la règle `!default`, mais ça me semble assez anecdotique actuellement, je vous invite à vous référer à la doc si cela vous intéresse.
 
 ### Pour s'entraîner
 Déclarez les variables suivantes au début de la feuille de styles, puis utilisez-les à chaque fois que c'est nécessaire :
@@ -542,7 +542,7 @@ Durant le processus de développement, il est souvent intéressant de diviser so
 
 Avec Sass, on n'a plus à se poser la question : notre outil favori modifie le comportement de la directive `@import` : en fait, plutôt que de laisser le navigateur charger une à une les feuilles de styles importées, il les importe dès à la compilation. Ainsi, on a plusieurs fichiers SCSS, pour une meilleure organisation, mais on n'a qu'un fichier CSS, pour plus de performance.
 
-Regardons de plus près notre feuille de style fil rouge : j'ai fait exprès de séparer les styles en différentes sections, pour garder un peu de clarté : on a ainsi la section *Reset*, la section *typographie*, la section *boutons*, etc.
+Regardons de plus près notre feuille de style fil rouge : j'ai fait exprès de séparer les styles en différentes sections, pour garder un peu de clarté : on a ainsi la section *configuration* contenant toutes nos variables, la section *Reset*, la section *typographie*, la section *boutons*, etc.
 
 Ce serait plus clair si chaque section avait son propre fichier, non ? Je vous propose donc de créer un fichier pour chacune d'entre elles, de manière à obtenir cette arborescence :
 
@@ -555,7 +555,7 @@ sass
   ├─ header_footer.scss
   ├─ reset.scss
   ├─ typo.scss
-  ├─ variables.scss
+  ├─ config.scss
   └─ main.scss
 ```
 
@@ -564,9 +564,9 @@ Placez dans chaque fichier le contenu de la section correspondante. Maintenant, 
 ```scss
 // Fichier main.scss
 @import 'reset'; // en premier, évidemment
-@import 'variables'; // important de le mettre ici, sinon les autres
+@import 'config'; // important de le mettre ici, sinon les autres
                      // fichiers n'auront pas accès à nos variables
-@import 'button';
+@import 'buttons';
 @import 'typo';
 @import 'cards';
 @import 'header_footer';
@@ -579,10 +579,33 @@ Comme vous pouvez le voir, la directive `@import` demande le nom du fichier à i
 ### Bonne pratique : les feuilles partielles
 Formidable ? Un petit détail vient quand même assombrir le tableau : Sass a généré un fichier CSS pour chaque fichier SCSS. Or, on souhaite seulement qu'il génère le fichier *main.css*. En fait, il faudrait pouvoir dire à Sass de ne pas ne pas compiler les autres feuilles de styles. Et, comme vous pouvez vous en douter, les concepteurs de Sass y ont pensé pour nous.
 
-On appelle **feuille partielle** (traduction de *partial*, en anglais), un fichier SCSS qui a uniquement vocation à être importée dans une autre feuille de styles et qui ne doit donc pas être compilée par Sass. Pour indiquer à Sass qu'un fichier est une feuille partielle, on a juste à ajouter un *underscore* (le symbole `_`) au début du nom de fichiers. Ainsi, `button.scss` devient `_button.scss`. Aucun changement à faire dans notre fichier `main.scss` pour autant, Sass devine qu'il doit ajouter le `_`.
+On appelle **feuille partielle** (traduction de *partial*, en anglais), un fichier SCSS qui a uniquement vocation à être importée dans une autre feuille de styles et qui ne doit donc pas être compilée par Sass. Pour indiquer à Sass qu'un fichier est une feuille partielle, on a juste à ajouter un *underscore* (le symbole `_`) au début du nom de fichiers. Ainsi, *buttons.scss* devient *_buttons.scss*. Aucun changement à faire dans notre fichier *main.scss* pour autant, Sass devine qu'il doit ajouter le `_`.
 
-### !default
+Si vous regardez dans notre dossier *stylesheets* vous devriez remarquer le changement : Sass a supprimé tous nos fichiers, à l'exception de *main.css*, car il a compris qu'on n'avait besoin que de ce dernier.
+
+Dernière chose à savoir : il est courant de regrouper toutes ses feuilles partielles dans un dans un sous-dossier *partials*, ça permet de mieux s'y retrouver. Je vous invite à le faire aussi pour notre projet. On se retrouve donc avec cette arborescence :
+
+```
+sass
+  ├─ partials
+  |   ├─ _sections.scss
+  |   ├─ _buttons.scss
+  |   ├─ _cards.scss
+  |   ├─ _contact.scss
+  |   ├─ _header_footer.scss
+  |   ├─ _reset.scss
+  |   ├─ _typo.scss
+  |   └─ _config.scss
+  └─ main.scss
+```
+
+N'oubliez pas bien sûr de modifier le fichier *main.scss* en conséquence pour indiquer le nouveau chemin de nos partials (mais toujours pas besoin du `_` ou de `.scss`, évidemment).
+
 ### En résumé
+* Avec Sass, la directive `@import` permet d'importer durant la compilation le contenu d'un fichier SCSS dans un autre fichier SCSS.
+* Il est inutile de préciser l'extension du fichier importé à Sass.
+* Une feuille partielle ou *partial*, dont le nom commence par un *underscore*, est un fichier qui a uniquement vocation à être importé dans d'autres feuilles de styles. Aucun fichier CSS n'est généré pour lui à la compilation.
+
 
 ## Les mixins (1/2)
 Si une variable est bien utile pour stocker une valeur, que faut-il utiliser pour stocker un bloc de code entier afin de faciliter sa réutilisation.
