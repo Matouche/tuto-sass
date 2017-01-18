@@ -492,13 +492,14 @@ Personnellement, je trouve qu'on gagne déjà un peu en lisibilité, puisque, in
 C'est tout pour l'interpolation, qui pourra aussi vous être utile si vous souhaitez modifier un selecteur, et, plus rarement, le nom d'une règle. Retenez bien sa syntaxe, on en reparlera dans plusieurs chapitres.
 
 [[information]]
-|Sachez que l'on peut aussi additionner des chaînes de caractères ainsi :
+|Parlons au passage rapidement de la **concaténation**. Il s'agit tout simplement de la possibilité d'additionner deux chaines de caractère, l'une après l'autre, avec l'opérateur `+` :
 |
 |```scss
 |font-family: sans- + "serif";
 |```
 |
-|Dans la pratique on se sert assez peu de cette opération (on parle de *concaténation*), et on lui préfère l'interpolation. Mais c'est toujours bon de savoir que ça existe.
+|Rien de bien compliqué, mais il est propable que je m'en serve à un moment ou un autre dans un exemple.
+
 
 ### En résumé
 * Une variable a un nom et permet de *stocker* une valeur.
@@ -988,9 +989,281 @@ La valeur `null` est donc particulièrement utile pour rendre certains arguments
 * On peut passer un bloc de code à un mixin. Ce code se place entre accolades `{}` après les arguments lors de l'inclusion du mixin. Lors de la création du mixin, on indique où le bloc doit être placé avec la commande `@content;`. Cette technique peut servir afin de gérer les media-queries globalement avec des mixins.
 * En attribuant à un mixin la valeur par défaut `null`, on rend cet argument optionnel : les propriétés qui reçoivent cet argument seront ignorées par Sass lors de la compilation et n'apparaîtront pas dans le fichier CSS généré.
 
+## Les fonctions, côté utilisateur
+Dans le chapitre sur les variables, j'ai évoqué très rapidement les fonctions. Il est temps de revenir plus en détail sur ces petites moulinettes bien pratiques. Dans ce chapitre, nous nous concentrerons sur l'utilisation des fonctions proposées par Sass, mais nous ne verrons pas coment créer les nôtres, ce qui sera l'objet d'un prochain passage.
 
-## L'héritage avec @extend
-### Il est où le grisbi ?
-### Bonne pratique : les classes fictives
-### Plus loin avec l'héritage
+### Une fonction ?
+
+Si vous avez un peu écouté en Maths au collège et/ou au lycée, vous devriez savoir ce qu'est une fonction mathématique. Du coup j'ai ressorti mon cahier de 3^e^ :
+
+> Définition : Une fonction est un procédé par lequel on associe à un nombre donné (initial) un seul nombre correspondant.
+
+Pour Sass, c'est un peu la même chose : on passe des données à la fonction (l'équivalent du nombre initial en Maths), elle fait ses calculs, et elle *renvoie* le résultat. Les données initiales, appelées arguments (comme pour les mixins) peuvent être des nombres, des couleurs, des chaînes de caractères, des listes, etc. tout comme le résultat.
+
+[[information]]
+| Si, en plus d'écouter en Maths, vous avez déjà fait de la programmation, non seulement vous êtes formidable, mais en plus vous devriez savoir ce qu'est une fonction pour les concepteurs de Sass.
+
+Un exemple ? Je vous propose d'essayer la fonction `darken`, inclue avec Sass, qui permet d'assombrir une couleur :
+
+![La fonction darken prend deux arguments (#ff0000 et 10 %) et renvoie #cc0000.](/media/galleries/848/b2d407f4-5ad5-4d20-a872-3536888a1531.png.960x960_q85.png)
+
+Elle prend deux arguments : `$color`, la couleur de départ, et `$amount` le pourcentage d'assombrissement. Elle renvoie la couleur assombrie du pourcentage demandé. On utilise la fonction `darken` ainsi :
+
+```scss hl_lines="2"
+    background-color: darken(#ff0000, 10%);
+```  
+Comme attendu, ce code donne le CSS suivant :
+
+```css hl_lines="2"
+    background-color: #cc0000;
+```
+
+Comme vous pouvez le remarquer, cette syntaxe est assez proche de celle utilisée par les mixins (les arguments entre parenthèses), sauf qu'on n'utilise pas `@include`. D'ailleurs, vous pouvez, comme pour les mixins, nommer vos arguments :
+
+```scss
+    background-color: darken($color: #ff0000, $amount: 10%);
+```
+
+Je pense que vous voyez bien en quoi cela peut nous être utile dans notre fil rouge. La couleur du hover de notre mixin bouton par exemple : il s'agit à chaque fois d'une version légèrement assombrie de la couleur d'arrière-plan de base. On peut tout à fait supprimer cet argument et le remplacer par un `darken($background-color, 10%);`. Notre mixin n'accepte donc désormais plus que deux arguments (ou plus, si vous avez ajouté la liste des polices).
+
+Sass met à votre disposition tout un tas de fonctions très utiles, que nous allons voir plus en détail dans la suite de ce chapitre.
+
+### Quelques fonctions bien utiles
+
+Commençons tout d'abord par voir quelques fonctions très utiles que Sass nous sert sur un plateau. Pour limiter l'effet "liste de courses", je les ai classées en différentes catégories.
+
+#### Pour définir une couleur
+
+Vous avez sans doute déjà utilisé `rgb()`, `rgba()`, `hsl()` ou `hsla()` pour définir une couleur dans une feuille de style. Sass considère que ce sont des fonctions qui renvoient une couleur. Cela veut dire qu'il les convertira automatiquement au format le plus adapté (le plus court) dans le fichier final.
+[[information]]
+| Si vous ne connaissez pas le modèle HSL (Teinte Saturation Lumière), allez donc voir par [ici](http://docs.webplatform.org/wiki/css/color#HSL_and_HSLA_notation) ou par [là](http://fr.wikipedia.org/wiki/Teinte_saturation_lumi%C3%A8re).
+
+#### Pour jouer avec les nombres
+
+De toutes les fonctions que Sass propose concernant les nombres, je pense que `percentage($number)` et `round($number)` sont les deux seules que vous devez retenir.
+
+La première demande un nombre sans unité et retourne un pourcentage, comme dans cet exemple :
+```scss
+div{
+  width: percentage(0.5); //50%
+}
+```  
+Cependant, cela devient vraiment intéressant si vous avez des valeurs en pixels (tirées d'une maquette par exemple), car vous n'avez plus besoin de faire les calculs vous-mêmes :
+
+```scss
+div{
+  width: percentage(200px/960px); //20,8333% (vous aviez prévu de le faire de tête ?)
+}
+```
+
+Si vous calculez l'ensemble des dimensions de vos blocs avec `percentage()` (en vous basant sur les dimensions dans la maquette statique), vous pouvez obtenir une grille fluide en un rien de temps.
+
+
+Enfin, la fonction `round()` renvoie l'arrondi à l'unité du nombre donné. Très utile lorsque vous faites des divisions impliquant des pixels :
+```scss
+small{
+  font-size: round(15px/2); //8px (7.5px aurait été absurde)
+}
+```
+
+Bon, là je vous ai montré leur fonctionnement avec des valeurs inscrites "en dur", mais vous comprenez bien qu'utiliser des fonctions est surtout intéressant avec des variables. Ainsi, si vous changez la couleur principale de votre design, définie dans le fichier *config.scss* (ou quelque soit le nom que vous lui avez donné), les fonctions recalculeront à votre place les couleurs secondaires.
+
+
+### La palette du peintre
+
+Voyons maintenant quelques unes des très nombreuses fonctions à notre disposition pour modifier les couleurs.
+
+#### Inverse, Nuance de gris et Mélange
+
+Commençons par celles qui changent radicalement une couleur :
+```scss
+invert($color)
+grayscale($color)
+mix($color1, $color2)
+```
+Les deux premières prennent une couleur pour seul argument :
+
++ `invert()` renvoie l'inverse ou négatif de la couleur donnée (ex: #ff0000 devient #00ffff),
++ `grayscale()`renvoie la nuance de gris correspondant à la couleur, c'est-à-dire son équivalent totalement désaturé (ex: #ff0000 devient #808080).
+
+Enfin, la fonction `mix()`prend deux couleurs, et renvoie le mélange des deux :
+
+```scss
+h1{
+  color: mix(#ff0000, #0000ff); //Renvoie #7f007f
+  //Rouge + Bleu = Violet
+}
+```
+A noter que `mix()`accepte un troisième argument optionnel en pourcentage, `$weight`, qui indique s'il faut plus de la première ou de la deuxième couleur.
+
+#### Lumière, Saturation, Opacité
+
+Continuons avec des fonctions qui proposent des altérations plus fines de lumière, de saturation ou d'opacité :
+```scss
+//Lumière
+lighten($color, $amount) //plus clair
+darken($color, $amount) //plus sombre
+
+//Saturation
+saturate($color, $amount) //plus saturé
+desaturate($color, $amount) //moins saturé
+
+//Opacité
+opacify($color, $amount) //plus opaque
+transparentize($color, $amount) //moins opaque
+```
+Nous avons déjà vu `darken()` et, comme vous pouvez le constater, toutes ces fonctions demandent une couleur et un « pourcentage d'efficacité » de la transformation. Je pense que les noms sont assez explicites, donc plutôt que de vous décrire tout en détail, je vous propose plutôt un joli schéma bilan :
+
+![Schéma-bilan des fonctions qui modifient une couleur  ($amount: 30%)](/media/galleries/848/41f4769a-d494-44d9-a0b9-3601179a71b2.png.960x960_q85.png)
+
+
+[[information]]
+|Les plus malins d'entre vous auront remarqué que le résultat de la fonction `grayscale()` correspond exactement à celui de `desaturate()` avec un `$amount` de 100%.
+
+### Jouons avec les listes
+
+Avant de finir ce chapitre, je vous propose de regarder quelques fonctions qui permettent de modifier des listes.
+
+La première est `append($list, $val)` et sert à ajouter un élément à la fin d'une liste :
+
+```scss hl_lines="2"
+$liste 1: "Source Sans Pro", Helvetica, Arial;
+$liste2: append($font-list, sans-serif); // "Source Sans Pro", Helvetica, Arial, sans-serif
+```
+
+La deuxième est `join($list1, list2)` et assemble deux listes en une seule :
+
+```scss hl_lines="3"
+$liste1: 50px 2em;
+$liste2: 10px 2em;
+$liste3: join($liste1, $liste2); // 50px 2em 10px 2em
+```
+[[information]]
+| Sachez que `append()` et `join()` acceptent un troisième argument optionnel : `$separator`. Il permet de choisir le séparateur entre les éléments de la liste générée (entrez `comma` si vous voulez des virgules ou `space` si vous voulez des espaces). Par défaut, Sass choisit le séparateur de la/les listes passées en argument(s).
+
+La troisième et dernière fonction est assez particulière mais très puissante. La fonction `zip($lists...)` accepte un ensemble de listes qu'elle va assembler en une unique *liste multidimensionnelle* (une liste de listes).
+Pour comprendre son fonctionnement, je vous propose d'essayer vous-même ce petit exemple :
+
+```scss hl_lines="5"
+$proprietes: color background-color width;
+$durees: 1s 2s 10s;
+$timing: linear ease-in-out ease;
+div{
+  transition: zip($proprietes, $durees, $timing);
+}
+```
+
+Le code généré par Sass sera le suivant :
+
+```css hl_lines="2"
+div {
+  transition: color 1s linear, background-color 2s ease-in-out, width 10s ease;
+}
+```
+
+Comme vous pouvez le constater, `zip()` a renvoyé une liste contenant 3 listes, qui contiennent chacune un élément de chaque liste passée en argument.
+
+
+[[question]]
+| Et dans la pratique, ça sert à quoi ?
+
+Excellente et pertinente question, brave lecteur ! J'ai eu personnellement à utiliser `join()` dans un cas précis il y a peu, qui pourrait se présenter à vous dans le futur. Bourbon, que nous verrons plus tard, propose la variable suivante :
+
+```
+$font-stack-georgia: (
+  "Georgia",
+  "Times",
+  "Times New Roman",
+  serif,
+);
+```
+
+Elle fait partie de tout un lot de *font stacks*, c'est-à-dire des listes de polices prêtes à l'emploi. Personnellement, je cherchais à utiliser *Bitter*, qui est une très chouette police à empattement. Bourbon ne propose pas de *font stack* pour Bitter, mais comme elle se rapproche de Georgia, j'ai pu faire ceci, et le tour était joué :
+
+```
+$bitter: join(Bitter, $font-stack-georgia); // "Bitter", "Georgia", "Times",...
+```
+
+À côté de cela, ces trois fonctions (et plus particulièrement `zip()`) se révèleront particulièrement utiles lorsqu'on utilisera des boucles, dans les prochains chapitres. Voyons justement trois autres fonctions (et après, c'est fini, promis) dont nous auront besoin avec les boucles.
+
+La première, qui n'est pas bien compliquée à apréhender, c'est la fonction `length($list)`. Elle renvoie, comme son nom l'indique, la longueur de la liste, c'est-à-dire le nombre d'éléments contenus dans celle-ci. Ainsi, `length($font-stack-georgia)` renverra 4, car il y a 4 éléments dans cette liste.
+
+Avant d'évoquer les deux autres, il est important que vous compreniez bien à quoi correspond l'indice ou index d'un item. Dans une liste, chaque élément a un index unique. Il s'agit tout bêtement de sa position dans la liste : le premier a l'index 1, le deuxième a l'index 2, etc.
+
+Prenons l'exemple de notre liste `$bitter`. On obtient les couples index-valeur suivants :
+
++-------------------------------------------------------+
+| La liste $bitter                                      |
++======+======+=========+=======+=================+=====+
+| Index| 1    | 2       | 3     | 4               | 5   |
++------+------+---------+-------+-----------------+-----+
+|Valeur|Bitter|"Georgia"|"Times"|"Times New Roman"|serif|
++------+------+---------+-------+-----------------+-----+
+
+La fonction `nth($list, $n)` permet de récupérer une valeur de la liste `$list` en donnant son index `$n` :
+
+```scss
+font-family: nth($bitter, 2); // "Georgia"
+font-family: nth($bitter, 9); // Provoque une erreur, il n'y a pas assez d'items
+font-family: nth($bitter, length($bitter)); // serif
+```
+
+Comme vous le voyez ligne 3, on peut obtenir le dernier élément d'une liste en combinant `nth()` et `length()`.
+
+La fonction `index($list, $value)` a le comportement exactement inverse. Elle renvoie l'index de la première apparition (en partant de la gauche) de la valeur `$value` dans la liste `$list`. Si la valeur donnée n'existe pas dans la liste, la fonction renvoie `null`. Ainsi, `index($bitter, Georgia)` renverra 2.
+
+[[attention]]
+| Si vous avez déjà fait un peu de programmation, vous remarquerez que, pour Sass, une liste commence à l'index 1 et non à l'index 0, au contraire de la plupart des langages de programmation.
+
 ### En résumé
+* Une *fonction* demande des arguments, fait des calculs et renvoie un résultat.
+
++-----------------------------------------------------------------------------------------------------+
+|Mémo des fonctions utiles                                                                            |
++---------+---------------------------------------------+---------------------------------------------+
+|Catégorie|Nom(Arguments)                               | Résultat                                    |
++=========+=============================================+=============================================+
+|Nombres  |`percentage($number)`                        |Le pourcentage correspondant au nombre       |
++         +---------------------------------------------+---------------------------------------------+
+|         |`round($number)`                             |L'arrondi à l'unité                          |
++---------+---------------------------------------------+---------------------------------------------+
+|Couleurs |`rgb($red, $green, $blue)`                   |La couleur demandée                          |
++         +---------------------------------------------+---------------------------------------------+
+|         |`rgba($red, $green, $blue, $alpha)`          |La couleur demandée                          |
++         +---------------------------------------------+---------------------------------------------+
+|         |`hsl($hue, $saturation, $lightness)`         |La couleur demandée                          |
++         +---------------------------------------------+---------------------------------------------+
+|         |`hsla($hue, $saturation, $lightness, $alpha)`|La couleur demandée                          |
++         +---------------------------------------------+---------------------------------------------+
+|         |`invert($color)`                             |La couleur inverse (négatif)                 |
++         +---------------------------------------------+---------------------------------------------+
+|         |`grayscale($color)`                          |La nuance de gris correspondant à la couleur |
++         +---------------------------------------------+---------------------------------------------+
+|         |`mix($color1, $color2)`                      |Le mélange des deux couleurs                 |
++         +---------------------------------------------+---------------------------------------------+
+|         |`lighten($color, $amount)`                   |La couleur plus claire (selon le %)          |
++         +---------------------------------------------+---------------------------------------------+
+|         |`darken($color, $amount)`                    |La couleur plus foncée (selon le %)          |
++         +---------------------------------------------+---------------------------------------------+
+|         |`saturate($color, $amount)`                  |La couleur plus saturée (selon le %)         |
++         +---------------------------------------------+---------------------------------------------+
+|         |`desaturate($color, $amount)`                |La couleur moins saturée (selon le %)        |
++         +---------------------------------------------+---------------------------------------------+
+|         |`opacify($color, $amount)`                   |La couleur plus opaque (selon le %)          |
++         +---------------------------------------------+---------------------------------------------+
+|         |`transparentize($color, $amount)`            |La couleur moins opaque (selon le %)         |
++---------+---------------------------------------------+---------------------------------------------+
+|Listes   |`nth($list, $n)`                             |La valeur dans la liste à l'index `$n`       |
++         +---------------------------------------------+---------------------------------------------+
+|         |`index($list, $value)`                       |L'index de la valeur dans la liste           |
++         +---------------------------------------------+---------------------------------------------+
+|         |`length($list)`                              |Le nombre d'éléments dans la liste           |
++         +---------------------------------------------+---------------------------------------------+
+|         |`append($list, $val, $separator: auto)`      |La liste avec la valeur ajoutée à la fin     |
++         +---------------------------------------------+---------------------------------------------+
+|         |`join($list1, $list2, $separator: auto)`     |Les deux listes assemblées en une seule      |
++         +---------------------------------------------+---------------------------------------------+
+|         |`zip($lists...)`                             |La liste multidimensionnelle tirée des listes|
++---------+---------------------------------------------+---------------------------------------------+
+
+C'est la fin de ce dernier chapitre concernant les bases de Sass. Mais c'est pas fini ! Dans les prochains chapitres, il sera question d'héritage de classe, de boucles, de conditions et d'autres réjouissances.
