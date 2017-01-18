@@ -1192,13 +1192,9 @@ Avant d'évoquer les deux autres, il est important que vous compreniez bien à q
 
 Prenons l'exemple de notre liste `$bitter`. On obtient les couples index-valeur suivants :
 
-+-------------------------------------------------------+
-| La liste $bitter                                      |
-+======+======+=========+=======+=================+=====+
-| Index| 1    | 2       | 3     | 4               | 5   |
-+------+------+---------+-------+-----------------+-----+
-|Valeur|Bitter|"Georgia"|"Times"|"Times New Roman"|serif|
-+------+------+---------+-------+-----------------+-----+
+| Index  | 1      | 2         | 3       | 4                 | 5     |
+|--------|--------|-----------|---------|-------------------|-------|
+| Valeur | Bitter | "Georgia" | "Times" | "Times New Roman" | serif |
 
 La fonction `nth($list, $n)` permet de récupérer une valeur de la liste `$list` en donnant son index `$n` :
 
