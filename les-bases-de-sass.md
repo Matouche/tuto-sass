@@ -664,19 +664,24 @@ Il nous reste donc à inclure notre mixin. Pour cela, on se sert de la directive
 }
 ```
 
-Maintenant Sass comprend qu'il faut inclure le contenu du mixin `button` **avant** la compilation vers CSS. Vous noterez cependant que le code généré n'est pas exactement celui que l'on avait auparavant. En effet, le contenu du mixin a été inclu **deux fois**, d'abord pour `#produits .more, #clients .more`, et ensuite pour `#production .more, #contact button`. Nous verrons qu'il est possible de changer ce comportement dans quelques chapitres, lorsqu'il sera question des *classes fictives*.
-
-On peut inclure autant de mixins que l'on veut dans un même bloc. Ainsi, le code suivant est tout à fait envisageable :
+Maintenant Sass comprend qu'il faut inclure le contenu du mixin `button` **avant** la compilation vers CSS. On peut inclure autant de mixins que l'on veut dans un même bloc. Ainsi, le code suivant est tout à fait envisageable :
 
 ```scss
 //Code bidon
 h1{
-  @include joli-hover;
-  @include gros;
+  @include mandarine;
+  @include clemetine;
+  @include citron;
 }
 ```
 
 Voilà, vous savez désormais inclure un mixin, reste à voir comment le paramétrer.
+
+Vous noterez cependant que le code généré n'est pas exactement celui que l'on avait auparavant. En effet, le contenu du mixin a été inclu *deux fois*, d'abord pour `#produits .more, #clients .more`, et ensuite pour `#production .more, #contact button`. Cela crée une répétition dans notre code CSS. On pourait croire que cela alourdit le fichier envoyé au client et rallonge donc le temps de chargement. Sauf que… pas vraiment.
+
+En fait, il est fort probable que vous utilisiez **gzip** sur votre serveur pour réduire la taille des fichiers envoyés à vos visiteurs (si ce n'est pas le cas, vous devriez[^gzip]). Or l'un des mécanismes principaux de gzip consiste à supprimer toutes les répétitions (en les remplaçant par des pointeurs vers la première occurence). Le fichier CSS généré par Sass sera donc probablement plus lourd, mais ce ne sera pas le cas du fichier envoyé à votre visiteur.
+
+[^gzip]: Pour vérifier que gzip est bien configuré, il y a [ce test](https://checkgzipcompression.com/).
 
 ### Les arguments
 
