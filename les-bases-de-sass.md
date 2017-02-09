@@ -502,9 +502,9 @@ C'est tout pour l'interpolation, qui pourra aussi vous être utile si vous souha
 
 
 ### En résumé
-* Une variable a un nom et permet de *stocker* une valeur.
-* On *déclare* une variable ainsi : `$nom: valeur;`. Ensuite, pour accéder à la valeur, on donne le nom de la variable.
-* Il existe 4 principaux *types de données* : les nombres, les chaînes de caractères, les couleurs et les listes.
+* Une variable a un nom et permet de **stocker** une valeur.
+* On **déclare** une variable ainsi : `$nom: valeur;`. Ensuite, pour accéder à la valeur, on donne le nom de la variable.
+* Il existe 4 principaux **types de données** : les nombres, les chaînes de caractères, les couleurs et les listes.
 * Pour insérer une variable dans le nom d'une propriété, dans un sélecteur, ou en tant que media-query, on utilise la syntaxe d'interpolation `#{$variable}`.
 
 [[information]]
@@ -603,9 +603,9 @@ sass
 N'oubliez pas bien sûr de modifier le fichier *main.scss* en conséquence pour indiquer le nouveau chemin de nos partials (mais toujours pas besoin du `_` ou de `.scss`, évidemment).
 
 ### En résumé
-* Avec Sass, la directive `@import` permet d'importer durant la compilation le contenu d'un fichier SCSS dans un autre fichier SCSS.
+* Avec Sass, la directive `@import` permet d'**importer durant la compilation** le contenu d'un fichier SCSS dans un autre fichier SCSS.
 * Il est inutile de préciser l'extension du fichier importé à Sass.
-* Une feuille partielle ou *partial*, dont le nom commence par un *underscore*, est un fichier qui a uniquement vocation à être importé dans d'autres feuilles de styles. Aucun fichier CSS n'est généré pour lui à la compilation.
+* Une **feuille partielle** ou *partial*, dont le nom commence par un *underscore*, est un fichier qui a uniquement vocation à être importé dans d'autres feuilles de styles. Aucun fichier CSS n'est généré pour lui à la compilation.
 
 
 ## Les mixins (1/2)
@@ -670,8 +670,9 @@ Maintenant Sass comprend qu'il faut inclure le contenu du mixin `button` **avant
 //Code bidon
 h1{
   @include mandarine;
-  @include clemetine;
+  @include clementine;
   @include citron;
+  @include button;
 }
 ```
 
@@ -740,8 +741,8 @@ Pour finir, doit renseigner la valeur de ces arguments à chaque `@include`, en 
 Voilà, ce code nous économise de recopier plusieurs fois les mêmes règles lorsque seules les valeurs changent. Avec le même mixin, on obtient deux boutons de même forme mais de couleurs différentes.
 
 ### En résumé
-* Un mixin est un *bout de code réutilisable*.
-* Il se *déclare* ainsi :
+* Un mixin est un **bout de code réutilisable**.
+* Il se **déclare** ainsi :
 
     ```scss
     @mixin nom-du-mixin {
@@ -750,7 +751,7 @@ Voilà, ce code nous économise de recopier plusieurs fois les mêmes règles lo
     ```
 
 * A chaque fois qu'on veut l'utiliser, on se sert de la directive `@include nom-du-mixin`.
-* Les *arguments* sont les options du mixin. On s'en sert comme ceci :
+* Les **arguments** sont les options du mixin. On s'en sert comme ceci :
 
     ```scss
     @mixin nom-du-mixin ($arg1, $arg2) {
@@ -1217,7 +1218,7 @@ La fonction `index($list, $value)` a le comportement exactement inverse. Elle re
 | Si vous avez déjà fait un peu de programmation, vous remarquerez que, pour Sass, une liste commence à l'index 1 et non à l'index 0, au contraire de la plupart des langages de programmation.
 
 ### En résumé
-* Une *fonction* demande des arguments, fait des calculs et renvoie un résultat.
+* Une **fonction** demande des arguments, fait des calculs et renvoie un résultat.
 
 +-----------------------------------------------------------------------------------------------------+
 |Mémo des fonctions utiles                                                                            |
