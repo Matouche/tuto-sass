@@ -226,7 +226,264 @@ Je pense que cette section assez théorique devrait vous avoir fait comprendre q
 * Les **placeholders** sont des sélecteurs dont le nom commence par le symbole `%` et dont peuvent hériter d'autres éléments. Ils ne servent d'ailleurs qu'à cela car ils n'apparaissent pas ensuite dans le code CSS généré.
 * L'héritage amène parfois à **des résultats innatendus** et présente de sérieuses limitations. On lui préfère souvent les **mixins**.
 
-Dans le prochain chapitre, on se lance dans un sujet passionnant, les boucles !
+Dans le prochain chapitre, on se lance dans un sujet passionnant, les conditions !
+
+## Les conditions
+
+Entrons maintenant dans le royaume des *conditions*. Comme c'est un concept assez complexe à expliquer, je vous propose d'étudier d'abord le principe dans un premier temps, puis de voir son utilité dans un deuxième temps.
+
+### Les bases
+
+Tout d'abord, il faut savoir que avec Sass on peut effectuer des tests. Par exemple, on peut vérifier que la variable `$truc` vaut 42. Pour cela on utilise l'opérateur `==`, comme ceci :
+```scss
+$truc == 42
+```
+
+Ce test a pour résultat un booléen. Ce booléen vaudra `true` si le test est positif (si `$truc` vaut bien 42) ou `false` si le test est négatif (si `$truc` ne vaut pas 42). Il existe six opérateurs différents pour faire des tests :
+
+
+|Opérateur| Exemple     | Test positif si…             |
+----------|-------------|------------------------------|
+|**==**   |`$truc == 42`|`$truc` égal 42               |
+|**!=**   |`$truc != 42`|`$truc` différent de 42       |
+|<        |`$truc < 42` |`$truc` inférieur strict à 42 |
+|\>       |`$truc > 42` |`$truc` supérieur strict à 42 |
+|<=       |`$truc <= 42`|`$truc` inférieur ou égal à 42|
+|\>=      |`$truc >= 42`|`$truc` supérieur ou égal à 42|
+
+J'ai mis les deux premiers en gras car ce sont les seuls que j'ai déjà utilisé dans la pratique. Les autres sont, à mon humble avis, plus anecdotiques.
+
+Intéressons-nous maintenant à la directive `@if`. Elle attend une condition à évaluer (le plus souvent un booléen) et un bloc de code entre accolades. Elle s'utilise comme ceci :
+```scss hl_lines="2"
+p{
+  @if $condition {
+    color: red;
+  }
+}
+```
+La condition à évaluer est ici `$condition` :
+
+- si `$condition` vaut `true` ou n'importe quoi autre que `false` ou `null`, alors le bloc de code sera inséré :
+
+```css
+p{
+  color: red;
+}
+```
+- si `$condition` vaut `false` ou `null` alors Sass ignorera le bloc de code.
+
+Comme vous devriez le deviner, on peut remplacer `$condition` par l'un des tests vus précédemment :
+
+```scss
+$var: 'bidule';
+p{
+  @if $var == 'bidule'{
+    color: red;
+  }
+  @if $var == 'machin'{
+    color: blue;
+  }
+}
+```
+
+Le code généré sera :
+
+```css
+p{
+  color: red;
+}
+```
+
+### @else, @else if…
+
+Passons à des choses plus complexes… On veut dire ceci à Sass :
+
+```text
+SI $var == 'bidule'
+  Appliquer color: red;
+SINON
+  Appliquer color: blue;
+```
+La directive Sass pour dire « SINON » est `@else`. Elle s'utilise ainsi :
+
+```scss
+p{
+  @if $var == 'bidule'{
+    color: red;
+  }
+  @else{
+    color: blue;
+  }
+}
+```
+
+Donc, si on a `$var: 'chose';` alors le code généré sera :
+
+```css
+p {
+  color: blue;
+}
+```
+
+Encore plus compliqué. On veut que Sass comprenne ceci :
+
+```text
+SI $var == 'bidule'
+  Appliquer color: red;
+SINON SI $var == 'machin'
+  Appliquer color: green;
+SINON
+  Appliquer color: blue;
+```
+
+Pour dire « SINON SI » à Sass, on va employer `@else if`, comme cela :
+```scss
+p{
+  @if $var == 'bidule'{
+    color: red;
+  }
+  @else if $var == 'machin'{
+    color: green;
+  }
+  @else{
+    color: blue;
+  }
+}
+```
+
+Deux trois choses à savoir (qui peuvent sembler évidentes à certains d'entre vous) :
+* Les directives `@else` et `@else if` sont optionnelles.
+* On peut utiliser autant de `@else if` que l'on veut après un `@if`, il ne peut y a voir qu'un `@else`.
+* Le `@else` se place toujours en dernier, après le/les `@else if` s'il y en a.
+* Il y a une grande différence entre plusieurs `@if` d'affilée et un `@if` suivi de plusieurs `@else if`. Dans le premier cas, Sass évalue chaque condition individuellement. Dans le second, si l'une des conditions est remplie, alors Sass ne regardera pas les suivantes.
+
+Voilà pour la théorie, voyons maintenant à quoi ça sert dans la pratique…
+
+### Mini-TP, un mixin bien compliqué
+
+#### Prérequis
+Passons maintenant à la pratique, et j'ai décidé de vous laisser un peu libres. Vous vous souvenez des mixins « *media-queries* » que nous avions codés il y a quelques chapitres ? Je vous avais suggéré de faire un mixin par appareil (mobile, ordinateur de bureau, etc.). Il y a mieux. Nous allons créer un unique mixin `breakpoint` qui accepte un argument (le nom de l'appareil) et qui génère la *media-query* correspondante.³
+Voici par exemple ce que j’attends :
+```scss
+\\SCSS :
+p{
+  @include breakpoint(mobile){
+    font-size: 16px;
+  }
+}
+\\Ce qui donne en CSS :
+@media screen and (max-width: 640px) {
+  p {
+    font-size: 16px;
+}}
+```
+
+Je veux que votre mixin accepte au moins `mobile`, `tablette` et `ordi` en argument. Si on donne une valeur différente, Sass doit afficher un message d'erreur et ne pas générer de code CSS. Pour cela, vous devez utiliser la directive `@error` dont nous n'avons pas encore parlé, qui s'emploie ainsi :
+
+```scss
+@error "L'argument $appareil ne peut valoir que mobile, tablette ou ordi.";
+```
+
+Voilà, vous savez tout, à vous de jouer !
+
+#### La solution
+Fini ? Je vous laisse comparer votre solution avec la mienne. Si vous bloquez, vous pouvez toujours regarder un petit extrait puis ré-essayer par vous-même.
+[[secret]]
+| ```scss
+| @mixin breakpoint($appareil){
+|   @if $appareil == mobile{
+|     @media screen and (max-width: 640px){
+|       @content;
+|     }
+|   }
+|   @else if $appareil == phablette{
+|     @media screen and (min-width: 640px){
+|       @content;
+|     }
+|   }
+|   @else if $appareil == tablette{
+|     @media screen and (min-width: 800px){
+|       @content;
+|     }
+|   }
+|   @else if $appareil == ordi{
+|     @media screen and (min-width: 1024px){
+|       @content;
+|     }
+|   }
+|   @else{
+|       @error "L'argument $appareil ne peut valoir que mobile, phablette, tablette ou ordi.";
+|       //Cette directive affiche une erreur et bloque la conversion en CSS.
+|       //Elle est utile pour vérifier si un argument a une valeur cohérente.
+|   }
+| }
+| ```
+
+#### Un peu mieux…
+Comme tout TP, ce mixin n'est pas parfait. En effet, il est généralement déconseillé de choisir des *breakpoints* (points d'arrêts) spécifiques à un appareil. De nouveaux écrans apparaissent chaque année, plus petits (smartwatches) ou plus grands (phablettes, télévisions connectées). Il est donc recommandé de définir ses *breakpoints* en fonction du contenu.
+
+Adaptons notre mixin pour qu'il utilise des variables plutôt que des largeurs d'écran fixes :
+
+[[secret]]
+| ```scss
+| $bp-S: 640px !default;
+| $bp-M: 800px !default;
+| $bp-L: 1024px !default;
+|
+| @mixin breakpoint($bp){
+|   @if $bp == xsmall{
+|     @media screen and (max-width: $bp-S){
+|       @content;
+|     }
+|   }
+|   @else if $bp == small{
+|     @media screen and (min-width: $bp-S){
+|       @content;
+|     }
+|   }
+|   @else if $bp == medium{
+|     @media screen and (min-width: $bp-M){
+|       @content;
+|     }
+|   }
+|   @else if $bp == large{
+|     @media screen and (min-width: $bp-L){
+|       @content;
+|     }
+|   }
+|   @else{
+|       @error "L'argument $bp ne peut valoir que xsmall, small, medium et large.";
+|   }
+| }
+| ```
+
+Ainsi, on ne pense plus en terme d'appareils, mais de présentation de la page, de la plus étroite à la plus large. Les variables ont des valeurs par défaut, mais qui sont faites pour être modifiées selon le projet (il faut faire des tests pour déterminer les bons *breakpoints*, par exemple en utilisant [ish.](http://bradfrost.com/demo/ish)).
+
+Si vous enregistrez ce code dans une feuille partielle à part, vous pourrez ensuite l'importer dans chacune de vos feuilles de styles, en changeant auparavant les valeurs par défaut (c'est tout l'intérêt de `!default`) :
+
+```scss
+$bp-S: 500px;
+$bp-M: 980px;
+$bp-L: 1250px;
+@import 'partials/breakpoint';
+```
+
+C'est tout pour ce TP, il y a sans doute d'autres améliorations possibles. Pour approfondir, vous pouvez regarder du côté de [Breakpoint Sass (en)](http://breakpoint-sass.com/), qui propose un mixin comme le nôtre (mais en plus complet).
+
+### En résumé
+
+* La directive @if permet d'indiquer qu'un bloc de propriétés ne doit être appliqué que si une certaine condition est remplie. On l'utilise ainsi :
+```scss
+@if $une_variable == "quelque chose"{
+    color: red;
+}
+```
+* Les directives `@else if` et `@else` permettent de créer des structures conditionnelles plus complexes. Elles sont facultatives et signifient respectivement « Sinon Si » et « Sinon ».
+
+### Pour s'entraîner
+
+Pourquoi ne pas modifier un peu notre mixin `button` ? Immaginons un instant un mixin qui n'accepte qu'un seul argument `$style` ? Si `$style` vaut `"light"`, alors on obtient un bouton avec un fond clair, s'il vaut `$dark` on obtient un bouton au fond sombre.
+
 
 ## Les boucles
 
@@ -357,7 +614,6 @@ Voilà, c'est tout pour `@each`, même si nous en reparlerons lorsqu'il sera que
 
 ### Mini TP : Gestion d'une *sprite*
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 ### En résumé
 
@@ -367,121 +623,3 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
 Je ne vous ai volontairement pas parlé de la boucle `@while` dont l'utilité est plus que limitée. Si vous pensez en avoir besoin un jour, je vous invite à consulter [la doc Sass](http://sass-lang.com/documentation/file.SASS_REFERENCE.html#_12).
 
 Dans le prochain chapitre, on parlera des conditions.
-
-## Les conditions
-
-Entrons maintenant dans le royaume des *conditions*. Comme c'est un concept assez complexe à expliquer, je vous propose d'étudier d'abord le principe dans un premier temps, puis de voir son utilité dans un deuxième temps.
-
-### Principes de base
-
-Tout d'abord, il faut savoir que avec Sass on peut effectuer des tests. Par exemple, on peut vérifier que la variable `$truc` vaut 42. Pour cela on utilise l'opérateur `==`, comme ceci :
-```scss
-$truc == 42
-```
-
-Ce test a pour résultat un booléen (enfin une utilité). Ce booléen vaudra `true` si le test est positif (si `$truc` vaut bien 42) ou `false` si le test est négatif (si `$truc` ne vaut pas 42). Il existe six opérateurs différents pour faire des tests :
-
-
-|Opérateur| Exemple     | Test positif si…             |
-----------|-------------|------------------------------|
-|**==**   |`$truc == 42`|`$truc` égal 42               |
-|**!=**   |`$truc != 42`|`$truc` différent de 42       |
-|<        |`$truc < 42` |`$truc` inférieur strict à 42 |
-|\>       |`$truc > 42` |`$truc` supérieur strict à 42 |
-|<=       |`$truc <= 42`|`$truc` inférieur ou égal à 42|
-|\>=      |`$truc >= 42`|`$truc` supérieur ou égal à 42|
-
-J'ai mis les deux premiers en gras car ce sont les seuls que j'ai déjà utilisé dans la pratique. Les autres sont, à mon humble avis, plus anecdotiques.
-
-Intéressons-nous maintenant à la directive `@if`. Elle attend une condition à évaluer (le plus souvent un booléen) et un bloc de code entre accolades. Elle s'utilise comme ceci :
-```scss hl_lines="2"
-p{
-  @if $condition {
-    color: red;
-  }
-}
-```
-La condition à évaluer est ici `$condition` :
-
-- si `$condition` vaut `true` ou n'importe quoi autre que `false` ou `null`, alors le bloc de code sera inséré :
-
-```css
-p{
-  color: red;
-}
-```
-- si `$condition` vaut `false` ou `null` alors Sass ignorera le bloc de code.
-
-Comme vous devriez le deviner, on peut remplacer `$condition` par l'un des tests vus précédemment :
-```scss
-$var: 'bidule';
-p{
-  @if $var == 'bidule'{
-    color: red;
-  }
-  @if $var == 'machin'{
-    color: blue;
-  }
-}
-```
-Le code généré sera :
-
-```css
-p{
-  color: red;
-}
-```
-
-### @else, @else if…
-
-Passons à des choses plus complexes… On veut dire ceci à Sass :
-```text
-SI $var == 'bidule'
-  Appliquer color: red;
-SINON
-  Appliquer color: blue;
-```
-La directive Sass pour dire « SINON » est `@else`. Elle s'utilise ainsi :
-```scss
-p{
-  @if $var == 'bidule'{
-    color: red;
-  }
-  @else{
-    color: blue;
-  }
-}
-```
-Donc, si on a `$var: 'chose';` alors le code généré sera :
-```css
-p {
-  color: blue;
-}
-```
-
-Encore plus compliqué. On veut que Sass comprenne ceci :
-```text
-SI $var == 'bidule'
-  Appliquer color: red;
-SINON SI $var == 'machin'
-  Appliquer color: green;
-SINON
-  Appliquer color: blue;
-```
-Pour dire « SINON SI » à Sass, on va employer `@else if`, comme cela :
-```scss
-p{
-  @if $var == 'bidule'{
-    color: red;
-  }
-  @else if $var == 'machin'{
-    color: green;
-  }
-  @else{
-    color: blue;
-  }
-}
-```
-Voilà pour la théorie, voyons maintenant à quoi ça sert dans la pratique…
-
-### Mini-TP, un mixin bien compliqué
