@@ -614,12 +614,102 @@ Voilà, c'est tout pour `@each`, même si nous en reparlerons lorsqu'il sera que
 
 ### Mini TP : Gestion d'une *sprite*
 
+#### Énoncé
+
+Je vous propose de finir ce chapitre avec un petit exercice où les boucles nous seront particulièrement utiles : l'utilisation d'une **sprite d'images**. Une sprite, si vous ne savez pas ce que c'est, c'est une grande image sur laquelle on regroupe toutes les icônes, tous les smilleys, tous les pictogrammes utilisés dans un design. Comme souvent, le but recherché est de réduire la charge pour le serveur et le temps de chargement pour les visiteurs (plutôt que d'effectuer une trentaine de requêtes sur les images, on n'en a plus qu'une seule à effectuer). Ensuite, on se débrouille avec des `background-position` pour sélectionner la bonne image. Comme c'est assez ch… fatigant à effectuer manuellement, il existe des outils clef-en-main qui générent directment la *sprite* et le code CSS correspondant. Mais je vous propose de partir sur quelque chose de simple et de tout faire avec une boucle. Le but est d'obtenir ceci :
+
+![Résultat de l'exercice](img/boutons_sprite.png)
+
+Voici le code HTML (il n'a rien d'exceptionnel) :
+
+```html
+<a class="button icon-settings">Settings</a>
+<a class="button icon-watch">Watch</a>
+<a class="button icon-power">Power</a>
+<a class="button icon-fullscreen">Full Screen</a>
+<a class="button icon-reduce">Reduce</a>
+```
+
+Voici notre sprite :
+
+![Mini sprite d'icones](img/sprite.png)
+
+Et voici les styles de base de nos boutons (ce n'est pas franchement le sujet de l'exercice) :
+
+```scss
+.button{
+    font-family: sans-serif;
+    border: none;
+    padding: 10px 10px 10px 52px; // on laisse de la place à gauche
+    background-color: #fe0;
+    position: relative; // pour pouvoir placer l'icône en absolute à l'intérieur
+    display: inline-block;
+    height: 32px;
+    line-height: 32px;
+
+    &:hover {
+        background-color: lighten(#fe0, 20%); //c'est plus sympa, non ?
+    }
+}
+```
+
+Maintenant, à vous de jouer ! Il suffit de chipoter un peu avec `.button::before`, une boucle et `background-position` et le tour est joué.
+
+#### Correction
+
+Voici ma correction de l'exercice :
+
+[[secret]]
+| ```scss hl_lines="27-34"
+| .button{
+|     font-family: sans-serif;
+|     border: none;
+|     padding: 10px 10px 10px 52px; // on laisse de la place à gauche
+|     background-color: #fe0;
+|     position: relative; // pour pouvoir placer l'icône en absolute à l'intérieur
+|     display: inline-block;
+|     height: 32px;
+|     line-height: 32px;
+|
+|     &:hover {
+|         background-color: lighten(#fe0, 20%); //c'est plus sympa, non ?
+|     }
+|
+|     &::before{
+|         content: ' ';
+|         display: block;
+|         position: absolute;
+|         top :10px;
+|         left: 10px;
+|         width: 32px;
+|         height: 32px;
+|         background-image: url(sprite.png);
+|     }
+| }
+|
+| $icons: 'settings', 'watch', 'power', 'fullscreen', 'reduce';
+|
+| @for $i from 1 through 5{
+|     .icon-#{nth($icons, $i)}::before{
+|         $pos: -32px * ($i - 1); //On commence à 0 et on finit à 32*4px
+|         background-position-x: $pos;
+|     }
+| }
+| ```
+
+J'ai surligné la partie qui nous intéresse vraiment. On a donc une liste qui contient les noms des icônes dans le bon ordre et une boucle `@for` qui parcourt la liste (avec la fonction `nth()`), insère le nom dans le sélecteur (avec une interpolation qui va bien) et la valeur de l'indice `$i` sert à calculer la position de la sprite. On aurait aussi pu parcourir la liste directement avec une boucle `@each` et se servir de la fonction (`index()`) pour retrouver la valeur de `$i`, mais ça me semblait moins évident.
+
+Voilà pour ce petit exercice. Comme dit précédemment, on préfèrera souvent utiliser un outil externe[^generateur] qui nous génère la sprite directement et le code (S)CSS qui va avec. En effet, on avit ici des icônes de la même taille allignées, ce qui est rarement le cas en conditions réelles, où il s'agit de gérer des sprites plus complexes. Voici par exemple celle utilisée par votre site préféré :
+
+![La sprite de Zeste de Savoir](https://zestedesavoir.com/static/images/sprite.f651d381c5ba.png)
+
+[^generateur]: Si vous êtes intéressé, je vous invite à regarder du côté de [Stitches](https://draeton.github.io/stitches/).
 
 ### En résumé
 
 + La boucle `@for` est utile pour **répéter plusieurs fois un même code en changeant uniquement un nombre** et s'utilise ainsi : `@for $i from 1 through 4{...}`.
 + La boucle `@each` permet de **répéter un même bout de code en parcourant une liste d'items**, on s'en sert comme ceci : `@each $aliment in frites, tomate, yaourt, raviolis{...}`.
 
-Je ne vous ai volontairement pas parlé de la boucle `@while` dont l'utilité est plus que limitée. Si vous pensez en avoir besoin un jour, je vous invite à consulter [la doc Sass](http://sass-lang.com/documentation/file.SASS_REFERENCE.html#_12).
+Je ne vous ai volontairement pas parlé de la boucle `@while`, qui me semble moins utile que les deux autres. Sachez que c'est une boucle qui se répète tant qu'une condition est vraie. Si vous pensez en avoir besoin un jour, je vous invite à consulter [la doc Sass](http://sass-lang.com/documentation/file.SASS_REFERENCE.html#_12).
 
-Dans le prochain chapitre, on parlera des conditions.
+## Vos grilles CSS avec Susy

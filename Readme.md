@@ -1,4 +1,4 @@
-#Des feuilles de style qui ont la classe avec Sass et Bourbon
+#Des feuilles de style qui ont la classe avec Sass
 
 Projet de tutoriel en cours concernant Sass et Bourbon, sur la plateforme Zeste de Savoir.
 
