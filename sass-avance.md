@@ -712,4 +712,178 @@ Voilà pour ce petit exercice. Comme dit précédemment, on préfèrera souvent 
 
 Je ne vous ai volontairement pas parlé de la boucle `@while`, qui me semble moins utile que les deux autres. Sachez que c'est une boucle qui se répète tant qu'une condition est vraie. Si vous pensez en avoir besoin un jour, je vous invite à consulter [la doc Sass](http://sass-lang.com/documentation/file.SASS_REFERENCE.html#_12).
 
-## Vos grilles CSS avec Susy
+
+## Et maintenant ?
+Nous arrivons tout doucement à la fin de ce tutoriel. Dans ce dernier chapitre (un peu fourre-tout, je dois bien l'admettre), il sera question du type map, de bibliothèques externes et des différentes implémentations de Sass.
+
+### Le type map
+
+Avant de vous lâcher dans la nature, je m'en voudrait de ne pas évoquer le type map. Je n'ai pas eu l'occasion de vous en parler jusqu'à présent, mais il s'agit du dernier arrivé (depuis Sass 3.3) parmi les types de données. Une map correspond à ce que l'on retrouve dans certains langages de programmation sous le nom de *tableau associatif*, de *hash*, ou encore de *dictionnaire*. On peut voir une map comme une liste dont chaque item serait une paire clef-valeur. Comme c'est tout de suite plus simple avec un exemple, je vous propose de voir comment on pourrait s'en servir pour les couleurs de notre feuille de styles :
+
+```scss
+$colors: (
+  base: #ff0,
+  base-hover: #ff4,
+  dark: #222,
+  dark-hover: #444,
+  light: #eee,
+  ultra-light: #fff
+);
+```
+
+[[information]]
+|Notez que j'ai écrit toutes les valeurs en dur pour cet exemple, mais que j'aurais clairement pu utiliser les fonctions `darken()` et `lighten()` pour en calculer certaines.
+
+Comme vous pouvez le voir, une map se définit entre parenthèses, les paires étant séparées par des virgules.
+
+Une fois notre map ainsi constituée, on peut s'en servir avec la fonction `map-get()` ainsi :
+
+```scss
+.client{
+  ...
+  background-color: map-get($colors, dark);
+  color: map-get($colors, ultra-light);
+  ...
+}
+```
+
+En terme d'organisation, on se retrouve avec une seule variable pour regrouper toutes nos couleurs, au lieu de la demi-douzaine auparavant, c'est donc plutôt une bonne chose. Cependant, la syntaxe `map-get()` est sacrément lourde à utiliser. C'est pourquoi, certains recommandent d'utiliser une fonction *helper* pour raccourcir celle-ci :
+
+```scss
+@function color($name) {
+  @return($colors, $name);
+}
+
+.client{
+  ...
+  background-color: color(dark);
+  color: color(ultra-light);
+  ...
+}
+```
+
+Simple, clair, organisé. On peut d'ailleurs faire des choses assez cools avec un tel système, pour supporter plusieurs « variantes » d'une même couleur via des sous-map. Si vous voulez en savoir plus, je vous invite à consulter [cet article de Erskine Design](http://erskinedesign.com/blog/friendlier-colour-names-sass-maps/).
+
+En dehors des couleurs, le type map peut aussi se révéler utile pour toute variable de configurations devant contenir des valeurs qui sont utilisées par plusieurs fonction d'une même bibliothèque, par exemple. Mais c'est une bibliothèque, au juste ?
+
+### Utiliser des bibliothèques externes
+
+Depuis le début de ce tutoriel, je n'arrête pas de vous dire que Sass évite de se répéter. C'est tellement vrai que des gens ont créé pour nous des **bibliothèques**, regroupant *mixins* et *fonctions* prêts à l'emploi. Je propose de vous en présenter deux-trois ici, sans entrer dans les détails, car leur documentation est souvent très accueillante.
+
+#### Neat
+
+![Neat](img/neat.png)
+
+**Neat** nous facilite la vie lorsqu'on doit créer des grilles fluides. Comme il s'agit d'une tâche récurrente, et qui nécessite des calculs parfois complexes, c'est l'exemple parfait de ce qu'une bibliothèque Sass peut nous offrir. Pour l'installer, la première chose à faire est d'utiliser `gem` :
+
+```
+gem install neat
+```
+
+Ensuite, déplacez-vous dans le dossier qui accueille les fichiers SCSS de votre projets et entrez la commande :
+
+```
+neat install
+```
+
+Cela devrait créer un sous-dossier "neat". Pour utiliser Bourbon, il ne vous plus qu'à l'importer, comme n'importe quel *partial* :
+
+```scss
+@import "neat/neat";
+```
+
+Neat propose principalement deux mixins : `grid-container` et `grid-column`. Voici un petit exemple pour mieux comprendre :
+
+```html
+<div class="conteneur">
+  <div class="simple">Lorem ipsum...</div>
+  <div class="simple">Lorem ipsum...</div>
+  <div class="double">Lorem ipsum...</div>
+</div>
+```
+
+```scss
+@import "neat/neat";
+
+.conteneur {
+  @include grid-container;
+}
+.simple {
+  @include grid-column(3);
+}
+.double {
+  @include grid-column(6);
+}
+```
+
+On obtient ceci :
+
+![Un exemple de grille utilisant Neat](img/exemple-neat.png)
+
+Par défaut, Neat utilise une grille de douze colonnes, séparées par des gouttières de 20 pixels. On peut changer cela, en utilisant une map :
+
+```
+grid: (
+columns: 4,
+gutter: 20px);
+
+.conteneur {
+  @include grid-container;
+}
+.simple {
+  @include grid-column(1, $grid);
+}
+.double {
+  @include grid-column(2, $grid);
+}
+```
+
+Je ne développe pas plus au sujet de Neat, mais je vous invite à [lire la documentation qui est très bien faite](http://neat.bourbon.io/examples/). Sachez qu'on peut aussi se servir de Neat pour créer des grilles *responsive*.
+
+#### Bourbon
+
+![Bourbon](img/bourbon.png)
+
+Les auteurs de Neat se sont avant tout fait connaître avec **Bourbon**, une autre bibliothèque Sass. Au départ, il s'agissait d'un bibliothèque de *mixins* gérant les préfixes propriétaires (préfixes requis par les navigeurs sur certaines propriétés CSS3). Par exemple, un mixin `animation` permettait d'obtenir toutes les variantes préfixées de la propriété `animation`. **Ce n'est plus le cas.** Tout d'abord, parce que l'évolution des navigateurs rend l'utilisation de tels préfixes de moins en moins nécessaire, et ensuite parce des outils comme [Autoprefixer](https://github.com/postcss/autoprefixer), intervenant après Sass, on remplacé les bibliothèques.
+
+Aujourd'hui, Bourbon propose néanmoins plusieurs mixins, fonctions et variables prédéfinis qui peuvent vous permettre de gagner du temps. Il faut le voir comme un couteau-suisse pour Sass.
+
+L'installation se déroule de la même manière que Neat : d'abord `gem install bourbon` puis `bourbon install` afin de pouvoir l'importer avec `@import bourbon/bourbon;`.
+
+Ça ne sert pas à grand chose que je vous liste tout ce que Bourbon propose, mais sachez qu'on y trouve un mixin pour générer des trianges, différentes courbes de timing pour les animations, des listes de polices de caractères fréquentes, etc. La documentation est de toute façon très bien faite, et [je vous invite à vous y référer](bourbon.io/docs/).
+
+#### Susy3
+
+![Susy3](img/susy.png)
+
+**Susy** est un autre système de grille fluide, très chouette à utiliser. L'approche est un peu différente, Susy ne proposant pas de mixins tous prêts mais des fonctions qui effectuent les calculs de largeur à notre place. L'idée est de ne pas imposer une méthode (Neat utilise des flottants dans ces mixins), afin de pouvoir utiliser, si on le souhaite, les derières nouveautés de CSS à ce sujet, *flexbox* et le module de grille de CSS[^css-grid]. La [page de présentation](http://oddbird.net/susy/) est un bon endroit pour commencer.
+
+[^css-grid]: Comment ! Vous ne connaissez pas le [CSS Grid module](https://la-cascade.io/css-grid-layout-guide-complet/) ? Mais c'est le futur, les amis !
+
+### RubySass, LibSass, DartSass
+
+Avant de se quitter, j'aimerai vous parler un peu des différentes implémentations de Sass. Jusqu'à présent, nous avons utilisé RubySass, c'est-à-dire l'implémentation de Sass écrite en Ruby. Il s'agit de l'édition originale et officielle de Sass (au moment où j'écris ces lignes nous en sommes à la version 3.5). Elle a l'avantage d'être assez facile à utiliser via la commande `sass --watch` qui accepte pas mal de paramètres. D'ailleurs, à ce sujet, saviez-vous que `sass --watch` accepte un paramètre `-t` qui permet de décider quel  d'intentation doivent avoir les fichiers CSS compilés ? `t` peut prendre la valeur *nested* (sa valeur par défaut), *compressed*, *compact* ou *expanded* (les noms parlent d'eux-même):
+
+```
+sass --watch sass:stylesheets -t compressed
+```
+
+Cependant, RubySass présente l'inconvénient d'être assez lent. À notre échelle ce n'est pas un véritable problème, mais ça peut le devenir sur de gros projets. C'est pour cela qu'est apparue LibSass, un portage de Sass en C/C++. LibSass est pensée pour être extrêmement rapide mais ne propose pas, de base, une interface en ligne de commande, comme RubySass. À la place, on a la possibilité de faire appel à LibSass à partir d'un grand nombre de langages de programmation. Cela peut sembler un peu compliqué, mais c'est ce qui va permettre par exemple d'appeler Sass de puis Javascript. Je ne choisis évidemment pas cet exemple par hasard. Vous avez peut-être déjà entendu parlé de Node.js, qui permet d'exécuter du code Javascript côté serveur. Pour plusieurs raisons, la première étant que les développeurs front-end connaissent bien Javascript, Node est aussi devenu l'outil standard pour scripter toutes les actions répétitives du front-end comme la minification du JS et du CSS, l'utilisation d'Autoprefixer, la génération des sprites et vous l'aurez compris, la compilation Sass. C'est pourquoi l'implementation la plus populaire de LibSass reste node-sass.
+
+Je ne vais pas développer ici l'automatisation des tâches du front-end avec Node, déjà parce que je ne connais pas bien ce sujet, et ensuite parce qu'il est suffisemment vaste pour qu'un cours entier lui soit destiné. Si RubySass était particulièrement pratique pour apprendre à se servir de Sass, node-sass est donc quant à lui l'outil idéal en préprod.
+
+[[question]]
+|Mais, n'est-ce pas problématique pour les développeurs de Sass de devoir maintenir RubySass et LibSass en même temps ?
+
+C'est une excellente question, à se demander si on ne vous l'a pas soufflée. :-°  
+En effet, le fait de devoir maintenir deux versions n'est pas sans inconvéniants. Les nouvelles fonctionnalités apparaissent d'abord dans RubySass, et il faut attendre pour qu'elles soient disponibles dans LibSass. En plus, il existe, ou il a existé, des comportements légèrements différents entre les deux implémentations.
+
+C'est ainsi qu'à la mi-2016, la développeuse Natalie Weizenbaum a annoncé [le lancement de DartSass](http://sass.logdown.com/posts/1022316-announcing-dart-sass), destiné à être la nouvelle implémentation officielle de Sass, remplaçant à le long terme RubySass. Le choix du langage Dart, soutenu par Google, n'est pas anodin. Dart permet une exécution rapide, proche de la vélocité de LibSass, tout en restant pratique pour implémenter de nouvelles fonctionnalités pour les développeurs de Sass, comme l'était Ruby. Surtout, Dart peut être exporté vers Javascript, facilitant l'intégration avec Node. À l'heure où j'écris ces lignes, DartSass est encore en beta, mais il semble bien que ce soit là que se trouve le futur de ce qui est désormais, je l'espère, votre préprocesseur favori. :)
+
+### Conclusion
+
+Chapitre assez chargé, n'est-ce pas ? On a vu comment se servir du type map, on a regardé du côté des bibliothèques externes et on a même évoqué (rapidement) LibSass. Avant de se quitter, je vous laisse avec quelques bonnes adresses pour se tenir au courant des nouveautés auour de Sass. En plus du [blog officiel de l'équipe qui développe Sass](http://sass.logdown.com/), je vous conseille de jeter régulièrement un oeil du côtés de sites spécialisés comme [SitePoint](https://www.sitepoint.com/?s=Sass), [The Treehouse](http://blog.teamtreehouse.com/?s=Sass) ou [CSS Tricks](https://css-tricks.com/?s=Sass). Ces trois là sont de vraies mines d'or. À l'époque où j'ai débuté l'écriture de ce tutoriel, [The Sass Way](https://thesassway.com) était la référence en termes d'articles. Malheureusement, il ne semble pas avoir été mis à jour depuis 2015 (oui, ce tutoriel a mis pas mal de temps à voir le jour :-°). Ce qui me permet de bien insister sur le fait que l'écosystème Sass est en constant changement. Si Sass reste à peu près stable, les bibliothèques qui l'entourent ne cessent de changer et d'évoluer. Un article qui a 2 ans peut donc être déjà obsolète. Ah, et pour finir, [n'oubliez pas la doc !](http://sass-lang.com/documentation/file.SASS_REFERENCE.html)
+
+## Conclusion
+
+Et voilà, vous êtes arrivés à la fin de ce tuto ! Je n'exclus pas quelques changements par la suite, si j'ai le temps d'améliorer certains exemples, ou si certaines infos deviennent obsolètes (et cela risque d'arriver assez vite). S'il vous reste des interrogations, n'hésitez pas à les poster sur le forum Web. Pour finir, je remercie évidemment toutes les personnes qui ont suivi ce tuto en beta et m'ont apporté leurs conseils.

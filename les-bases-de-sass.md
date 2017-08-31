@@ -500,6 +500,19 @@ C'est tout pour l'interpolation, qui pourra aussi vous être utile si vous souha
 |
 |Rien de bien compliqué, mais il est propable que je m'en serve à un moment ou un autre dans un exemple.
 
+### La règle !default
+
+Actuellement vous n'en verrez pas forcément l’intérêt, mais je souhaite tout de même vous parler de `!default`. Lorsque vous attribuez une valeur à une variable, il est possible que cette variable existe déjà. Dans ce cas là, la nouvelle valeur remplace l'ancienne. C'est le comportement par défaut. Pour que la variable garde sa valeur d'origine si elle existe déjà, alors il faut ajouter `!default`, comme ceci :
+
+```scss hl_lines="2"
+$macouleur: orange;
+$macouleur: skyblue !default;
+h1{
+  color: $macouleur; //color: orange;
+}
+```
+
+Je n'insiste pas trop là-dessus, car je ne vois pas d'application concrète à votre niveau. Sachez juste que cela existe.
 
 ### En résumé
 * Une variable a un nom et permet de **stocker** une valeur.
@@ -1217,8 +1230,45 @@ La fonction `index($list, $value)` a le comportement exactement inverse. Elle re
 [[attention]]
 | Si vous avez déjà fait un peu de programmation, vous remarquerez que, pour Sass, une liste commence à l'index 1 et non à l'index 0, au contraire de la plupart des langages de programmation.
 
+### Créer sa propre fonction
+
+[[question]]
+| Je cherche une fonction très particulière que tu n'as pas présenté, comment faire ?
+
+Il faut tout d'abord vérifier si cette fonction n'existe pas déjà. En effet, je n'ai pas la place (et ce serait sans intérêt) de décrire toutes les fonctions que Sass propose ici. Allez donc faire un tour sur [la page de la documentation consacrée aux fonctions](http://sass-lang.com/documentation/Sass/Script/Functions.html). Il y en a pour tous les goûts.
+
+Si vous pensez avoir besoin d'une fonction qui n'existe pas encore, il va falloir la créer. Prenons pour exemple une fonction chargée de calculer la largeur d'une grille de mise en page, constituée de colonnes séparées par des gouttières. Elle aura trois arguments :
+
++ le nombre de colonnes `$n`
++ la largeur d'une colonne `$colonne`
++ la largeur d'un gouttière `$gouttiere`
+
+Le nombre de gouttières est forcément égal à `$n - 1`. Voici donc le code de notre fonction :
+```scss
+@function largeur-grille($n, $colonne, $gouttiere){
+  @return $n * $colonne + ($n - 1) * $gouttiere;
+}
+```
+
+Comme vous le voyez, la syntaxe est proche de celle pour créer un mixin, à ceci près que l'on utilise la directive `@function` et que l'on doit appeler `@return` pour renvoyer le résultat de la fonction.
+
+Maintenant, on peut utiliser notre fonction comme n'importe quelle autre :
+```scss hl_lines="2"
+div{
+  width: largeur-grille(12, 60px, 20px); //940px
+}
+```
+
+Sachez enfin que, comme pour les mixins, on a la possibilité de donner des valeurs par défauts aux arguments :
+```scss hl_lines="1"
+@function largeur-grille($n: 12, $colonne: 60px, $gouttiere: 20px){
+  @return $n * $colonne + ($n - 1) * $gouttiere;
+}
+```
+
 ### En résumé
 * Une **fonction** demande des arguments, fait des calculs et renvoie un résultat.
+* On peut créer ses propres fonctions avec la syntaxe @function.
 
 +-----------------------------------------------------------------------------------------------------+
 |Mémo des fonctions utiles                                                                            |
